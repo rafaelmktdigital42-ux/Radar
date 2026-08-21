@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RADAR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Azeret+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0C0E; --bg-2:#141619; --bg-3:#1B1E22; --line:#262A2F; --line-2:#33383E;
+  --tx:#E9EAE8; --tx-2:#8A9097; --tx-3:#5C626A;
+  --red:#FF3B20; --red-soft:rgba(255,59,32,.12); --amber:#FFB020; --green:#38C172;
+  --disp:'Archivo',system-ui,sans-serif; --mono:'Azeret Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--tx);font-family:var(--mono);font-size:13px;line-height:1.5;min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--red);text-decoration:none}
+::selection{background:var(--red);color:#fff}
+
+.wrap{max-width:940px;margin:0 auto;padding:0 20px 120px}
+
+/* ---------- topbar ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;padding:20px 0 0;gap:16px}
+.logo{font-family:var(--disp);font-weight:800;font-size:19px;letter-spacing:.16em;text-transform:uppercase}
+.logo em{font-style:normal;color:var(--red)}
+.topbtn{background:transparent;border:1px solid var(--line-2);color:var(--tx-2);border-radius:999px;
+  padding:8px 15px;font-family:var(--disp);font-weight:600;font-size:9.5px;letter-spacing:.13em;
+  text-transform:uppercase;cursor:pointer;transition:.15s}
+.topbtn:hover{border-color:var(--red);color:var(--red)}
+.topbtn.filled{background:var(--red);border-color:var(--red);color:#fff}
+
+/* ---------- painel de config ---------- */
+.settings{display:none;margin-top:18px;border:1px solid var(--line);background:var(--bg-2);border-radius:14px;padding:20px}
+.settings.on{display:block}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.sgrid{grid-template-columns:1fr}}
+
+/* ---------- hero ---------- */
+.hero{text-align:center;padding:58px 0 0;transition:padding .3s}
+body.done .hero{padding:26px 0 0}
+.eyebrow{font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--tx-3);margin-bottom:20px}
+.eyebrow b{color:var(--red);font-weight:500}
+h1.q{font-family:var(--disp);font-weight:800;font-size:clamp(27px,5.2vw,46px);line-height:1.06;
+  letter-spacing:-.032em;margin-bottom:14px}
+h1.q em{font-style:normal;color:var(--red)}
+.lede{color:var(--tx-2);font-size:13px;max-width:520px;margin:0 auto 34px;line-height:1.6}
+body.done h1.q,body.done .lede{display:none}
+
+/* ---------- painel de busca ---------- */
+.panel{border:1px solid var(--line);background:var(--bg-2);border-radius:16px;padding:22px;text-align:left}
+.lab{display:block;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--tx-3);margin-bottom:8px}
+.field{margin-bottom:18px}
+.field:last-child{margin-bottom:0}
+
+input[type=text],input[type=password],select{
+  width:100%;background:var(--bg-3);border:1px solid var(--line-2);border-radius:9px;
+  padding:12px 13px;font-size:13.5px;font-family:var(--mono);color:var(--tx);transition:.15s;
+  appearance:none;-webkit-appearance:none}
+select{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'><path d='M1 1l4.5 4.5L10 1' stroke='%238A9097' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat;background-position:right 13px center;padding-right:34px}
+input:focus,select:focus{outline:none;border-color:var(--red);background:#1F2226}
+input::placeholder{color:var(--tx-3)}
+optgroup{background:var(--bg-2);color:var(--tx-3);font-style:normal}
+option{background:var(--bg-2);color:var(--tx)}
+
+.seg{display:flex;gap:7px;flex-wrap:wrap}
+.seg button{background:var(--bg-3);border:1px solid var(--line-2);border-radius:999px;padding:8px 15px;
+  cursor:pointer;font-family:var(--disp);font-weight:600;font-size:9.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--tx-2);transition:.14s}
+.seg button:hover{border-color:var(--tx-2);color:var(--tx)}
+.seg button.on{background:var(--red);border-color:var(--red);color:#fff}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:640px){.two,.three{grid-template-columns:1fr}}
+.note{font-size:11px;color:var(--tx-3);line-height:1.5;margin-top:8px}
+
+.cta{width:100%;margin-top:20px;background:var(--red);border:0;border-radius:10px;color:#fff;
+  padding:17px;font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.14em;
+  text-transform:uppercase;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
+.cta:hover{background:#FF4E36}
+.cta.stop{background:var(--bg-3);color:var(--red);box-shadow:inset 0 0 0 1px var(--red)}
+
+/* ---------- radar ---------- */
+.radarwrap{display:flex;flex-direction:column;align-items:center;gap:16px;padding:40px 0 10px}
+.radar{width:210px;height:210px;position:relative}
+.radar svg{width:100%;height:100%;display:block}
+.sweep{transform-origin:50% 50%;animation:spin 2.6s linear infinite;opacity:0}
+body.scanning .sweep{opacity:1}
+@keyframes spin{to{transform:rotate(360deg)}}
+.blip{opacity:0}
+body.scanning .blip{animation:blink 2.6s ease-in-out infinite}
+.blip:nth-of-type(2){animation-delay:.3s}.blip:nth-of-type(3){animation-delay:.7s}
+.blip:nth-of-type(4){animation-delay:1.1s}.blip:nth-of-type(5){animation-delay:1.6s}
+.blip:nth-of-type(6){animation-delay:2s}
+@keyframes blink{0%,70%{opacity:0}12%{opacity:1}40%{opacity:.35}}
+.sources{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--red)}
+.counting{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx-3)}
+@media(prefers-reduced-motion:reduce){.sweep,.blip{animation:none;opacity:.6}}
+
+/* ---------- log ---------- */
+.tape{border:1px solid var(--line);background:var(--bg-2);border-radius:12px;padding:14px 16px;
+  margin-top:22px;max-height:170px;overflow-y:auto;text-align:left;font-size:11.5px;line-height:1.85}
+.tape::-webkit-scrollbar{width:5px}.tape::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:9px}
+.tape .ln{display:flex;gap:11px;animation:slidein .2s ease both}
+@keyframes slidein{from{opacity:0;transform:translateX(-5px)}to{opacity:1;transform:none}}
+.tape .t{color:var(--tx-3);flex-shrink:0;font-size:10px}
+.tape .b{color:var(--tx-2)}
+.tape .hi .b{color:var(--tx)}.tape .done .b{color:var(--green)}.tape .bad .b{color:var(--red)}
+
+/* ---------- resultado ---------- */
+.results{margin-top:34px}
+.resulth{text-align:center;margin-bottom:22px}
+.resulth h2{font-family:var(--disp);font-weight:800;font-size:30px;letter-spacing:-.025em;margin-bottom:6px}
+.resulth p{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx-3)}
+
+.tally{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+@media(max-width:640px){.tally{grid-template-columns:repeat(2,1fr)}}
+.tally div{border:1px solid var(--line);background:var(--bg-2);border-radius:12px;padding:15px}
+.tally div.hot{border-color:var(--red);background:var(--red-soft)}
+.tally b{font-family:var(--disp);font-weight:800;font-size:30px;line-height:1;letter-spacing:-.03em;display:block}
+.tally div.hot b{color:var(--red)}
+.tally span{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--tx-3);margin-top:7px;display:block}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+.chip{background:var(--bg-2);border:1px solid var(--line-2);border-radius:999px;padding:9px 15px;cursor:pointer;
+  font-family:var(--disp);font-weight:600;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--tx-2);transition:.14s}
+.chip:hover{border-color:var(--tx-2);color:var(--tx)}
+.chip.on{background:var(--red);border-color:var(--red);color:#fff}
+.chip i{font-style:normal;opacity:.6;margin-left:6px}
+.outrow{display:flex;gap:8px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
+
+/* ---------- card ---------- */
+.card{border:1px solid var(--line);background:var(--bg-2);border-radius:14px;margin-bottom:11px;
+  overflow:hidden;animation:pop .28s ease both;transition:border-color .15s}
+@keyframes pop{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.card.prio{border-color:rgba(255,59,32,.45)}
+.card:hover{border-color:var(--line-2)}
+.chead{display:grid;grid-template-columns:26px 1fr auto;gap:14px;padding:17px 19px;align-items:start}
+@media(max-width:600px){.chead{grid-template-columns:22px 1fr;padding:15px}}
+.rk{font-family:var(--mono);font-size:11px;color:var(--tx-3);padding-top:4px}
+.nm h3{font-family:var(--disp);font-weight:700;font-size:16.5px;letter-spacing:-.012em;line-height:1.25;margin-bottom:3px}
+.nm .ad{font-size:11px;color:var(--tx-3);line-height:1.45}
+.sc{text-align:right;display:flex;align-items:baseline;gap:8px}
+@media(max-width:600px){.sc{grid-column:1/-1;justify-content:flex-start;margin-top:2px}}
+.sc b{font-family:var(--disp);font-weight:800;font-size:31px;line-height:.9;letter-spacing:-.04em;color:var(--tx-3)}
+.sc.hi b{color:var(--red)}.sc.mid b{color:var(--amber)}
+.sc span{font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--tx-3);max-width:74px;text-align:left;line-height:1.3}
+
+.tags{padding:0 19px 15px;display:flex;flex-wrap:wrap;gap:6px}
+@media(max-width:600px){.tags{padding:0 15px 13px}}
+.tag{border:1px solid var(--line-2);border-radius:999px;padding:5px 11px;font-size:9px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--tx-2)}
+.tag.red{border-color:rgba(255,59,32,.5);color:var(--red);background:var(--red-soft)}
+.tag.amber{border-color:rgba(255,176,32,.5);color:var(--amber);background:rgba(255,176,32,.09)}
+.tag.green{border-color:rgba(56,193,114,.45);color:var(--green);background:rgba(56,193,114,.08)}
+
+.probe{margin:0 19px 15px;border:1px solid var(--line);border-radius:11px;padding:13px 15px;background:var(--bg-3)}
+@media(max-width:600px){.probe{margin:0 15px 13px}}
+.probe .r1{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--tx-3);flex-shrink:0}
+.dot.ok{background:var(--green)}.dot.slow{background:var(--amber)}.dot.bad{background:var(--red)}
+.probe .txt{flex:1;min-width:150px;font-size:11.5px;color:var(--tx-2)}
+.probe .txt b{color:var(--tx);font-family:var(--disp);font-weight:700}
+.deepbtn{background:transparent;border:1px solid var(--red);border-radius:999px;color:var(--red);
+  padding:8px 14px;font-family:var(--disp);font-weight:700;font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;cursor:pointer;transition:.14s;white-space:nowrap}
+.deepbtn:hover{background:var(--red);color:#fff}
+.deepbtn:disabled{opacity:.45;cursor:wait}
+.bar{margin-top:12px;height:26px;border:1px solid var(--red);border-radius:7px;position:relative;
+  overflow:hidden;display:none;background:rgba(255,59,32,.06)}
+.bar.on{display:block}
+.bar i{position:absolute;inset:0 auto 0 0;width:0;background:rgba(255,59,32,.22);transition:width .55s linear}
+.bar span{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;
+  padding:0 11px;font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--red);font-weight:500}
+.big{font-family:var(--disp);font-weight:800;font-size:26px;line-height:1;letter-spacing:-.03em;margin-right:9px}
+.big.bad{color:var(--red)}.big.mid{color:var(--amber)}.big.good{color:var(--green)}
+.subline{font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--tx-3);margin-top:10px}
+
+.msg{margin:0 19px 17px;border:1px solid var(--line);border-radius:11px;background:var(--bg-3);padding:15px;display:none}
+@media(max-width:600px){.msg{margin:0 15px 15px}}
+.msg.on{display:block}
+.msgh{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+.msgh .l{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx-3)}
+.msgh .warn{font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--amber)}
+.msgbody{white-space:pre-wrap;font-size:12.5px;line-height:1.72;color:var(--tx);
+  border-left:2px solid var(--red);padding-left:14px}
+.acts{padding:0 19px 17px;display:flex;flex-wrap:wrap;gap:7px}
+@media(max-width:600px){.acts{padding:0 15px 15px}}
+.act{background:var(--bg-3);border:1px solid var(--line-2);border-radius:999px;padding:8px 14px;
+  font-family:var(--disp);font-weight:600;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--tx-2);cursor:pointer;transition:.14s;display:inline-block}
+.act:hover{border-color:var(--tx-2);color:var(--tx)}
+.act.prime{background:var(--red);border-color:var(--red);color:#fff}
+.act.prime:hover{background:#FF4E36;color:#fff}
+
+.err{border:1px solid var(--red);background:var(--red-soft);border-radius:11px;padding:14px 16px;
+  margin-top:18px;font-size:12px;line-height:1.6;text-align:left}
+.err b{display:block;font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.11em;
+  font-size:10.5px;color:var(--red);margin-bottom:5px}
+.blank{border:1px dashed var(--line-2);border-radius:14px;padding:46px 26px;text-align:center;color:var(--tx-3);font-size:12px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--red);
+  color:#fff;padding:12px 22px;border-radius:999px;font-family:var(--disp);font-weight:700;font-size:10px;
+  letter-spacing:.13em;text-transform:uppercase;transition:transform .26s;z-index:60}
+.toast.show{transform:translateX(-50%) translateY(0)}
+body.scanning .panel,body.scanning .cta{pointer-events:none;opacity:.5}
+body.scanning .cta.stop{pointer-events:auto;opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="logo">RAD<em>A</em>R</div>
+    <button class="topbtn" id="btnCfg">Perfil e chave</button>
+  </div>
+
+  <div class="settings" id="cfg">
+    <div class="sgrid">
+      <div class="field"><span class="lab">Seu nome</span><input type="text" id="pNome" placeholder="Rafael"></div>
+      <div class="field"><span class="lab">O que você faz</span><input type="text" id="pFaz" placeholder="sites e identidade visual"></div>
+    </div>
+    <div class="field" style="margin-bottom:0"><span class="lab">Google API key</span>
+      <input type="password" id="key" placeholder="AIza…" autocomplete="off">
+      <p class="note">Precisa das APIs Places (New) e PageSpeed Insights habilitadas. Fica salva só no seu navegador.</p>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="eyebrow" id="eyebrow"><b>01</b> · BUSCA</div>
+    <h1 class="q">Onde tem cliente <em>pagando bem</em>?</h1>
+    <p class="lede">Acha quem já tem movimento e não tem página, ou tem uma que está trabalhando contra. Mede o que está errado e escreve a mensagem que você manda.</p>
+
+    <div class="panel">
+      <div class="field">
+        <span class="lab">Onde buscar</span>
+        <div class="seg" id="scope">
+          <button data-v="cidade" class="on">Uma cidade</button>
+          <button data-v="perto">Perto de mim</button>
+          <button data-v="brasil">Brasil todo</button>
+        </div>
+      </div>
+
+      <div class="field" id="fCidade">
+        <span class="lab">Cidade</span>
+        <select id="cidade"></select>
+      </div>
+
+      <div class="field" id="fRaio" style="display:none">
+        <span class="lab">Raio da busca</span>
+        <div class="seg" id="raio">
+          <button data-v="5000">5 km</button><button data-v="10000" class="on">10 km</button>
+          <button data-v="20000">20 km</button><button data-v="50000">50 km</button>
+        </div>
+        <p class="note">Usa a localização do navegador. Precisa de HTTPS.</p>
+      </div>
+
+      <div class="field" id="fBrasil" style="display:none">
+        <p class="note" style="margin-top:0">Roda a mesma busca nas 10 maiores capitais e junta tudo numa lista só, sem repetir. Serve pra quem atende o país inteiro e não depende de estar perto do cliente.</p>
+      </div>
+
+      <div class="field">
+        <span class="lab">Nicho</span>
+        <input type="text" id="nicho" list="nichos" placeholder="clínica odontológica">
+        <datalist id="nichos">
+          <option value="dentista e odontologia"><option value="nutricionista">
+          <option value="clínica de estética e beleza"><option value="fisioterapia">
+          <option value="psicologia"><option value="advocacia"><option value="veterinária">
+          <option value="contabilidade"><option value="imobiliária"><option value="academia">
+          <option value="salão e barbearia"><option value="restaurante"><option value="clínica médica">
+          <option value="pet shop"><option value="arquitetura e interiores"><option value="oficina mecânica">
+        </datalist>
+      </div>
+
+      <div class="three">
+        <div class="field" style="margin-bottom:0"><span class="lab">Quantos negócios</span>
+          <select id="qtd"><option value="20">20 negócios</option><option value="40" selected>40 negócios</option><option value="60">60 negócios</option></select></div>
+        <div class="field" style="margin-bottom:0"><span class="lab">Movimento mínimo</span>
+          <select id="minRev"><option value="0">Tanto faz</option><option value="5" selected>5+ avaliações</option>
+            <option value="20">20+ avaliações</option><option value="50">50+ avaliações</option>
+            <option value="100">100+ avaliações</option><option value="300">300+ avaliações</option></select></div>
+        <div class="field" style="margin-bottom:0"><span class="lab">Nota mínima</span>
+          <select id="minRating"><option value="0" selected>Tanto faz</option><option value="3.5">3,5 ★ ou mais</option>
+            <option value="4">4,0 ★ ou mais</option><option value="4.5">4,5 ★ ou mais</option></select></div>
+      </div>
+      <p class="note" id="filtroNota">Movimento é quantas pessoas avaliaram — é o sinal de que o negócio fatura. Nota é a média de estrelas.</p>
+
+      <button class="cta" id="run">Varrer a cidade</button>
+    </div>
+
+    <div id="errBox"></div>
+
+    <div class="radarwrap">
+      <div class="radar">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <circle cx="100" cy="100" r="96" fill="none" stroke="#262A2F"/>
+          <circle cx="100" cy="100" r="66" fill="none" stroke="#22262B"/>
+          <circle cx="100" cy="100" r="36" fill="none" stroke="#1E2227"/>
+          <line x1="100" y1="4" x2="100" y2="196" stroke="#1E2227"/>
+          <line x1="4" y1="100" x2="196" y2="100" stroke="#1E2227"/>
+          <g class="sweep">
+            <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#FF3B20" stop-opacity=".55"/>
+              <stop offset="100%" stop-color="#FF3B20" stop-opacity="0"/></linearGradient></defs>
+            <path d="M100 100 L196 100 A96 96 0 0 0 132 9 Z" fill="url(#sg)"/>
+          </g>
+          <circle class="blip" cx="62" cy="52" r="3.4" fill="#FF3B20"/>
+          <circle class="blip" cx="141" cy="66" r="3.4" fill="#FF3B20"/>
+          <circle class="blip" cx="118" cy="128" r="3.4" fill="#FF3B20"/>
+          <circle class="blip" cx="74" cy="139" r="3.4" fill="#FF3B20"/>
+          <circle class="blip" cx="155" cy="112" r="3.4" fill="#FF3B20"/>
+          <circle class="blip" cx="90" cy="82" r="3.4" fill="#FF3B20"/>
+        </svg>
+      </div>
+      <div class="sources">Google · PageSpeed</div>
+      <div class="counting" id="counting">Aguardando alvo</div>
+    </div>
+
+    <div class="tape" id="tape" style="display:none"></div>
+  </div>
+
+  <div class="results" id="resultsSection" style="display:none">
+    <div class="resulth"><h2 id="rTitle">Resultado</h2><p id="rSub"></p></div>
+    <div class="tally">
+      <div><b id="tTotal">0</b><span>encontrados</span></div>
+      <div class="hot"><b id="tNo">0</b><span>sem site</span></div>
+      <div><b id="tSite">0</b><span>site pra avaliar</span></div>
+      <div><b id="tFone">0</b><span>com telefone</span></div>
+    </div>
+    <div class="chips" id="chips">
+      <button class="chip on" data-f="all">Todos <i id="cAll">0</i></button>
+      <button class="chip" data-f="nosite">Sem site <i id="cNo">0</i></button>
+      <button class="chip" data-f="site">Site pra avaliar <i id="cSite">0</i></button>
+      <button class="chip" data-f="prio">Mais quentes <i id="cPrio">0</i></button>
+    </div>
+    <div class="outrow">
+      <button class="act" id="copyList">Copiar lista</button>
+      <button class="act" id="csv">Baixar CSV</button>
+      <button class="act" id="again">Nova varredura</button>
+    </div>
+    <div id="list"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+var LEADS=[],RUNNING=false,ABORT=false,FILTER='all',SCOPE='cidade',RAIO=10000;
+var $=function(i){return document.getElementById(i);};
+
+/* ---------- cidades ---------- */
+var CIDADES={
+ 'Sul':['Curitiba, PR','Porto Alegre, RS','Florianópolis, SC','Joinville, SC','Londrina, PR','Caxias do Sul, RS','Maringá, PR','Blumenau, SC','Pelotas, RS','Criciúma, SC','Chapecó, SC','Cascavel, PR','Canoas, RS','Ponta Grossa, PR','Itajaí, SC','Foz do Iguaçu, PR','Santa Maria, RS','São José, SC'],
+ 'Sudeste':['São Paulo, SP','Rio de Janeiro, RJ','Belo Horizonte, MG','Campinas, SP','Guarulhos, SP','São Bernardo do Campo, SP','Santo André, SP','Osasco, SP','Ribeirão Preto, SP','Sorocaba, SP','Santos, SP','São José dos Campos, SP','Niterói, RJ','Uberlândia, MG','Juiz de Fora, MG','Contagem, MG','Vitória, ES','Vila Velha, ES','Serra, ES','Duque de Caxias, RJ','Nova Iguaçu, RJ','Campos dos Goytacazes, RJ','Bauru, SP','Piracicaba, SP','São José do Rio Preto, SP','Jundiaí, SP','Cachoeiro de Itapemirim, ES'],
+ 'Nordeste':['Salvador, BA','Fortaleza, CE','Recife, PE','São Luís, MA','Maceió, AL','Natal, RN','Teresina, PI','João Pessoa, PB','Aracaju, SE','Jaboatão dos Guararapes, PE','Feira de Santana, BA','Olinda, PE','Caucaia, CE','Campina Grande, PB','Petrolina, PE','Vitória da Conquista, BA','Caruaru, PE','Juazeiro do Norte, CE','Imperatriz, MA'],
+ 'Centro-Oeste':['Brasília, DF','Goiânia, GO','Campo Grande, MS','Cuiabá, MT','Aparecida de Goiânia, GO','Anápolis, GO','Várzea Grande, MT','Dourados, MS','Rio Verde, GO','Palmas, TO'],
+ 'Norte':['Manaus, AM','Belém, PA','Porto Velho, RO','Macapá, AP','Rio Branco, AC','Boa Vista, RR','Ananindeua, PA','Santarém, PA','Marabá, PA','Parintins, AM']
+};
+(function(){
+  var s=$('cidade'),h='';
+  Object.keys(CIDADES).forEach(function(reg){
+    h+='<optgroup label="'+reg+'">';
+    CIDADES[reg].slice().sort(function(a,b){return a.localeCompare(b,'pt-BR');})
+      .forEach(function(c){h+='<option value="'+c+'">'+c+'</option>';});
+    h+='</optgroup>';
+  });
+  h+='<optgroup label="Outra"><option value="__custom">Digitar outra cidade…</option></optgroup>';
+  s.innerHTML=h; s.value='São Paulo, SP';
+})();
+$('cidade').addEventListener('change',function(){
+  if(this.value!=='__custom'){ if($('cidadeLivre')) $('cidadeLivre').style.display='none'; return; }
+  if($('cidadeLivre')){ $('cidadeLivre').style.display='block'; $('cidadeLivre').focus(); return; }
+  var w=this.parentNode, inp=document.createElement('input');
+  inp.type='text'; inp.id='cidadeLivre'; inp.placeholder='Cidade, UF'; inp.style.marginTop='9px';
+  if(!$('cidadeLivre')) w.appendChild(inp);
+  ($('cidadeLivre')||inp).focus();
+});
+function cidadeAtual(){
+  var v=$('cidade').value;
+  if(v==='__custom') return ($('cidadeLivre')&&$('cidadeLivre').value.trim())||'';
+  return v;
+}
+
+var CAPITAIS=[{n:'São Paulo',lat:-23.5505,lng:-46.6333},{n:'Rio de Janeiro',lat:-22.9068,lng:-43.1729},
+ {n:'Brasília',lat:-15.7939,lng:-47.8828},{n:'Belo Horizonte',lat:-19.9167,lng:-43.9345},
+ {n:'Curitiba',lat:-25.4284,lng:-49.2733},{n:'Porto Alegre',lat:-30.0346,lng:-51.2177},
+ {n:'Salvador',lat:-12.9777,lng:-38.5016},{n:'Recife',lat:-8.0476,lng:-34.8770},
+ {n:'Fortaleza',lat:-3.7319,lng:-38.5267},{n:'Goiânia',lat:-16.6869,lng:-49.2648}];
+
+var store={get:async function(k){try{var r=await window.storage.get(k);return r?r.value:null;}catch(e){return null;}},
+ set:async function(k,v){try{await window.storage.set(k,v);}catch(e){}}};
+['key','nicho','pNome','pFaz'].forEach(async function(f){var v=await store.get('radar:'+f);if(v&&$(f))$(f).value=v;});
+(async function(){var c=await store.get('radar:cidadeSel');
+  if(c&&$('cidade').querySelector('option[value="'+CSS.escape(c)+'"]')) $('cidade').value=c;})();
+
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);
+  t._t=setTimeout(function(){t.classList.remove('show');},1900);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function logLine(t,k){var p=$('tape');p.style.display='block';
+  var n=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  var d=document.createElement('div');d.className='ln'+(k?' '+k:'');
+  d.innerHTML='<span class="t">'+n+'</span><span class="b">'+esc(t)+'</span>';
+  p.appendChild(d);p.scrollTop=p.scrollHeight;}
+function counting(t){$('counting').textContent=t;}
+function eyebrow(n,t){$('eyebrow').innerHTML='<b>'+n+'</b> · '+t;}
+function showError(t,m){$('errBox').innerHTML='<div class="err"><b>'+esc(t)+'</b>'+esc(m)+'</div>';}
+
+$('btnCfg').addEventListener('click',function(){
+  var c=$('cfg');c.classList.toggle('on');this.classList.toggle('filled',c.classList.contains('on'));});
+
+$('scope').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+  [].forEach.call(this.children,function(c){c.classList.remove('on');});b.classList.add('on');SCOPE=b.dataset.v;
+  $('fCidade').style.display=SCOPE==='cidade'?'block':'none';
+  $('fRaio').style.display=SCOPE==='perto'?'block':'none';
+  $('fBrasil').style.display=SCOPE==='brasil'?'block':'none';
+  $('run').textContent=runLabel();});
+$('raio').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+  [].forEach.call(this.children,function(c){c.classList.remove('on');});b.classList.add('on');
+  RAIO=parseInt(b.dataset.v,10);});
+function runLabel(){return SCOPE==='brasil'?'Varrer o Brasil':SCOPE==='perto'?'Varrer a região':'Varrer a cidade';}
+
+function getGeo(){return new Promise(function(res,rej){
+  if(!navigator.geolocation)return rej(new Error('Este navegador não expõe localização.'));
+  navigator.geolocation.getCurrentPosition(function(p){res({lat:p.coords.latitude,lng:p.coords.longitude});},
+   function(){rej(new Error('Localização negada. Autorize no navegador ou escolha uma cidade.'));},{timeout:10000});});}
+
+/* ---------- places ---------- */
+var FIELDS=['places.id','places.displayName','places.formattedAddress','places.websiteUri','places.rating',
+ 'places.userRatingCount','places.nationalPhoneNumber','places.googleMapsUri','places.businessStatus',
+ 'places.primaryTypeDisplayName','nextPageToken'].join(',');
+async function searchOnce(key,query,bias,wanted){
+  var out=[],token=null,g=0;
+  while(out.length<wanted&&g<3){g++;
+    var body={textQuery:query,languageCode:'pt-BR',regionCode:'BR',maxResultCount:20};
+    if(bias)body.locationBias={circle:{center:{latitude:bias.lat,longitude:bias.lng},radius:bias.r||10000}};
+    if(token)body.pageToken=token;
+    var res=await fetch('https://places.googleapis.com/v1/places:searchText',{method:'POST',
+      headers:{'Content-Type':'application/json','X-Goog-Api-Key':key,'X-Goog-FieldMask':FIELDS},
+      body:JSON.stringify(body)});
+    var d=await res.json();
+    if(!res.ok)throw new Error((d&&d.error&&d.error.message)||('HTTP '+res.status));
+    var a=d.places||[];out=out.concat(a);token=d.nextPageToken;
+    if(!token||!a.length)break;
+    await new Promise(function(r){setTimeout(r,1600);});}
+  return out.slice(0,wanted);
+}
+
+/* ---------- etapa 1: batida na porta ---------- */
+async function precheck(url){
+  var t0=performance.now();
+  try{ await fetch(url,{mode:'no-cors',cache:'no-store'});
+    return {ms:performance.now()-t0,alive:true};
+  }catch(e){ return {ms:performance.now()-t0,alive:false}; }
+}
+
+/* ---------- etapa 2: análise profunda ---------- */
+var FASES=[{t:'Abrindo a página com o foco no celular',to:18},
+ {t:'Medindo quanto tempo a tela principal demora',to:38},
+ {t:'Vendo se o conteúdo pula durante o carregamento',to:56},
+ {t:'Checando se o Google entende a página',to:74},
+ {t:'Olhando se dá pra ler e navegar',to:88},{t:'Fechando a nota',to:95}];
+async function pagespeed(key,url){
+  var q='https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url='+encodeURIComponent(url)
+   +'&key='+encodeURIComponent(key)+'&strategy=mobile'
+   +['performance','seo','accessibility','best-practices'].map(function(c){return '&category='+c;}).join('');
+  var res=await fetch(q),d=await res.json();
+  if(!res.ok||!d.lighthouseResult)return {failed:true};
+  var c=d.lighthouseResult.categories||{},a=d.lighthouseResult.audits||{};
+  var pk=function(x){return c[x]&&c[x].score!=null?Math.round(c[x].score*100):null;};
+  return {failed:false,perf:pk('performance'),seo:pk('seo'),a11y:pk('accessibility'),bp:pk('best-practices'),
+    lcp:a['largest-contentful-paint']?a['largest-contentful-paint'].displayValue:null,
+    cls:a['cumulative-layout-shift']?a['cumulative-layout-shift'].displayValue:null,
+    viewport:a['viewport']?a['viewport'].score:null};
+}
+async function runDeep(i){
+  var l=LEADS[i];if(!l.website||l.deepRunning)return;
+  var key=$('key').value.trim();
+  if(!key){showError('Falta a chave','Abra "Perfil e chave" e cole a sua Google API key.');
+    $('cfg').classList.add('on');return;}
+  l.deepRunning=true;render();
+  var bar=document.querySelector('[data-bar="'+i+'"]');if(!bar)return;
+  bar.classList.add('on');
+  var fill=bar.querySelector('i'),lab=bar.querySelector('.f-lab'),pct=bar.querySelector('.f-pct'),f=0;
+  fill.style.width='6%';lab.textContent=FASES[0].t;pct.textContent='6%';
+  var tick=setInterval(function(){if(f<FASES.length-1)f++;
+    fill.style.width=FASES[f].to+'%';lab.textContent=FASES[f].t;pct.textContent=FASES[f].to+'%';},2600);
+  try{l.audit=await pagespeed(key,l.website);}catch(e){l.audit={failed:true};}
+  clearInterval(tick);
+  l.deepRunning=false;l.deep=true;computeScore(l);
+  logLine(l.name+' · '+finding(l).curto,l.audit.failed?'bad':'done');
+  render();
+}
+
+/* ---------- score ---------- */
+function computeScore(l){
+  var rc=l.reviews||0,rt=l.rating||0;
+  var demand=Math.min(100,(Math.log10(rc+1)/Math.log10(501))*100);
+  demand*= rt>=4.5?1:rt>=4.0?.92:rt>0?.78:.5;
+  var gap,q=null;
+  if(!l.website)gap=100;
+  else if(l.audit&&l.audit.failed)gap=90;
+  else if(l.audit){var a=l.audit,n=function(v){return v==null?50:v;};
+    q=Math.round(n(a.perf)*.35+n(a.seo)*.30+n(a.a11y)*.15+n(a.bp)*.20);
+    gap=100-q;if(a.viewport===0)gap=Math.min(100,gap+15);}
+  else if(l.pre&&!l.pre.alive)gap=88;
+  else if(l.pre&&l.pre.ms>2500)gap=62;
+  else gap=48;
+  l.quality=q;
+  var G=Math.max(gap,1)/100,D=Math.max(demand,1)/100;
+  l.score=Math.round(100*Math.pow(G,0.55)*Math.pow(D,0.45));
+  return l;
+}
+function band(s){return s>=78?'hi':s>=58?'mid':'lo';}
+function verdict(l){
+  if(!l.website)return{t:'Criar do zero',c:'red'};
+  if(l.audit&&l.audit.failed)return{t:'Criar do zero',c:'red'};
+  if(!l.deep)return{t:'Site pra avaliar',c:'amber'};
+  if(l.quality<50)return{t:'Refazer inteiro',c:'red'};
+  if(l.quality<70)return{t:'Refazer',c:'amber'};
+  if(l.quality<85)return{t:'Só ajustar',c:''};
+  return{t:'Deixar pra lá',c:''};
+}
+function finding(l){
+  var a=l.audit;
+  if(!l.website)return{k:'nosite',curto:'não tem site',abre:'',frase:'vocês não têm site'};
+  if(a&&a.failed)return{k:'erro',curto:'site não respondeu',abre:'ele não respondeu',frase:'o site de vocês não respondeu'};
+  if(!a&&l.pre&&!l.pre.alive)return{k:'erro',curto:'site não respondeu',abre:'ele não respondeu',frase:'o site de vocês não respondeu'};
+  if(a&&a.viewport===0)return{k:'celular',curto:'abre torto no celular',abre:'ele abre torto no celular',frase:'o site de vocês abre torto no celular'};
+  if(a&&a.lcp&&a.perf!=null&&a.perf<60)return{k:'lento',curto:'tela principal em '+a.lcp,
+    abre:'a tela principal demora '+a.lcp+' pra aparecer',frase:'a tela principal do site demora '+a.lcp+' pra aparecer'};
+  if(a&&a.perf!=null&&a.perf<50)return{k:'lento',curto:'desempenho '+a.perf,
+    abre:'ele tira '+a.perf+' de 100 em velocidade no celular',frase:'o site de vocês tira '+a.perf+' de 100 em velocidade no celular'};
+  if(a&&a.seo!=null&&a.seo<70)return{k:'invisivel',curto:'SEO '+a.seo,
+    abre:'o Google não está entendendo direito a página',frase:'o Google não está entendendo direito a página de vocês'};
+  if(!l.deep&&l.pre&&l.pre.ms>2500)return{k:'lento',curto:'demorou '+(l.pre.ms/1000).toFixed(2)+'s pra abrir',
+    abre:'ele levou '+(l.pre.ms/1000).toFixed(2)+'s só pra começar a responder',
+    frase:'o site de vocês demorou '+(l.pre.ms/1000).toFixed(2)+'s só pra começar a responder'};
+  return{k:'ok',curto:'site em ordem',abre:'',frase:'o site de vocês está bem resolvido'};
+}
+
+/* ---------- mensagem ---------- */
+function saudacao(){var h=new Date().getHours();return h<12?'bom dia':h<18?'boa tarde':'boa noite';}
+function buildMessage(l,v){
+  var nome=$('pNome').value.trim(),faz=$('pFaz').value.trim();
+  var f=finding(l),s=saudacao(),P=[];
+  var cid=l.praca||(l.address||'').split(',').slice(-2)[0]||'sua região';
+  var nicho=(l.category||$('nicho').value.trim()||'esse serviço').toLowerCase();
+  var direto=(v%2===0);
+  if(f.k==='nosite'){
+    P.push('Oi, '+s+'! Hoje '+l.name+' vive de indicação, e indicação tem teto.');P.push('');
+    P.push(direto?'Quem já conhece indica. Quem não conhece está agora no celular procurando '+nicho+' em '+cid
+      +', e não chega até vocês porque não tem onde chegar. Esse cliente não aparece em relatório nenhum: não dá pra sentir falta do que você não vê.'
+      :'Vocês têm '+l.reviews+' avaliações e '+l.rating.toFixed(1)+' de nota. Isso é reputação construída. Só que ela só funciona pra quem já ouviu falar de vocês — quem está procurando agora, no celular, não encontra nada além do pino no mapa.');
+    P.push('');P.push('O endereço no mapa resolve pra quem já decidiu. A página é o que faz decidir.');P.push('');
+    P.push('Já fiz uma versão da página de vocês pra mostrar essa diferença na prática. Segue aí. Vê se o telefone que coloquei é o de vocês mesmo.');P.push('');
+    P.push('Fica com você, use se achar que vale. Se quiser, eu te apresento a ideia inteira numa conversa rápida, e se fizer sentido eu coloco no ar.');P.push('');
+    P.push('O QUE RECRIEI: uma página de uma dobra só — o que vocês fazem, a prova, o endereço e um botão de WhatsApp.');
+  } else if(f.k==='ok'){
+    P.push('Oi, '+s+'! Fui olhar o site de vocês esperando achar o que consertar e não achei — está bem resolvido.');P.push('');
+    P.push('Mando isso porque o que costuma faltar em quem já tem site bom não é o site: é o que vem depois dele. Página de campanha, material pra anúncio, apresentação de serviço.');P.push('');
+    P.push('Se em algum momento aparecer uma frente dessas, me chama.');P.push('');
+    P.push('O QUE RECRIEI: nada, e é de propósito. Prefiro chegar quando eu tiver algo pra somar.');
+  } else {
+    P.push('Oi, '+s+'! O site de vocês está trabalhando contra vocês: '+(f.abre||f.frase)+'.');P.push('');
+    P.push(direto?'Quase todo mundo que procura '+nicho+' faz isso no celular, no meio de outra coisa, com pressa. A pessoa não avisa que desistiu: ela volta pro Google e clica no de baixo. Essa visita não aparece em lugar nenhum: não dá pra sentir falta do que você não vê.'
+      :'Vocês têm '+l.reviews+' avaliações e '+(l.rating?l.rating.toFixed(1):'—')+' de nota, então a reputação já está feita. O gargalo não é atrair, é o que acontece nos primeiros segundos depois que a pessoa clica.');
+    P.push('');P.push('A primeira tela decide antes de qualquer texto ser lido. É ali que a conversa é ganha ou perdida.');P.push('');
+    P.push('Peguei a primeira tela e refiz, resolvendo isso. Segue o antes e o depois aqui embaixo. Dá uma olhada e me diz se os serviços que listei são os que vocês mais fazem.');P.push('');
+    P.push('É seu, sem compromisso nenhum. Se quiser, eu passo por cada parte com você e edito o que não fizer sentido.');P.push('');
+    P.push('O QUE RECRIEI: a primeira tela, refeita resolvendo — '+f.frase+'.');
+  }
+  P.push('');P.push(nome?'— '+nome+(faz?', '+faz:''):'— [seu nome vai aqui: preencha o perfil]');
+  return P.join('\n');
+}
+
+/* ---------- tags ---------- */
+function tagsOf(l){
+  var t=[],a=l.audit;
+  var v=verdict(l);t.push({t:v.t,c:v.c});
+  if(!l.website)t.push({t:'Só mapa',c:'red'});
+  if(l.website&&/instagram\.com|linktr\.ee|facebook\.com/.test(l.website))t.push({t:'Só Instagram',c:'red'});
+  if(a&&!a.failed){
+    if(a.viewport===0)t.push({t:'Abre torto no celular',c:'red'});
+    if(a.perf!=null&&a.perf<40)t.push({t:'Site lento pra doer',c:'red'});
+    else if(a.perf!=null&&a.perf<60)t.push({t:'Site lento',c:'red'});
+    if(a.seo!=null&&a.seo<70)t.push({t:'Não aparece no Google',c:'red'});
+  }
+  if(l.rating&&l.reviews)t.push({t:l.rating.toFixed(1)+' · '+l.reviews+' avaliações',c:''});
+  if(l.reviews>=150)t.push({t:'Muito movimento',c:'green'});
+  else if(l.reviews>=40)t.push({t:'Movimento bom',c:'green'});
+  if(l.praca)t.push({t:l.praca,c:''});
+  if(l.phone)t.push({t:'Tem telefone',c:''});
+  return t;
+}
+
+/* ---------- render ---------- */
+function cardHTML(l,i,rank){
+  var b=band(l.score),v=verdict(l),f=finding(l);
+  var tags=tagsOf(l).map(function(x){return '<span class="tag '+x.c+'">'+esc(x.t)+'</span>';}).join('');
+  var wa=l.phone?'https://wa.me/55'+l.phone.replace(/\D/g,''):null;
+  var adlib='https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&q='+encodeURIComponent(l.name)+'&search_type=keyword_unordered';
+  var probe='';
+  if(l.website){
+    var dot='',txt='Site não checado';
+    if(l.deep&&l.audit&&!l.audit.failed){
+      var q=l.quality,qc=q>=80?'good':q>=50?'mid':'bad';
+      probe='<div class="probe"><div class="r1"><span class="big '+qc+'">'+q+'</span>'
+        +'<span class="txt" style="font-size:9px;letter-spacing:.14em;text-transform:uppercase">nota do site</span></div>'
+        +'<div class="r1" style="margin-top:9px"><span class="dot '+(q>=70?'ok':'bad')+'"></span>'
+        +'<span class="txt">'+esc(f.frase.charAt(0).toUpperCase()+f.frase.slice(1))+'</span></div>'
+        +'<div class="subline">Google · desempenho '+(l.audit.perf!=null?l.audit.perf:'—')
+        +' · SEO '+(l.audit.seo!=null?l.audit.seo:'—')+(l.audit.lcp?' · tela principal em '+l.audit.lcp:'')+'</div></div>';
+    } else {
+      if(l.pre){ if(!l.pre.alive){dot='bad';txt='O site não respondeu';}
+        else{dot=l.pre.ms>2500?'slow':'ok';txt='Nota do site <b>'+(l.pre.ms/1000).toFixed(2)+'s</b> pra abrir';} }
+      probe='<div class="probe"><div class="r1"><span class="dot '+dot+'"></span><span class="txt">'+txt+'</span>'
+        +'<button class="deepbtn act-deep" data-i="'+i+'"'+(l.deepRunning?' disabled':'')+'>'
+        +(l.deepRunning?'Analisando…':'Análise profunda com o Google →')+'</button></div>'
+        +'<div class="bar'+(l.deepRunning?' on':'')+'" data-bar="'+i+'"><i></i>'
+        +'<span><em class="f-lab" style="font-style:normal">Aguardando</em><em class="f-pct" style="font-style:normal">0%</em></span></div></div>';
+    }
+  }
+  var nome=$('pNome').value.trim();
+  return '<article class="card'+(b==='hi'?' prio':'')+'">'
+  +'<div class="chead"><div class="rk">'+(rank<10?'0':'')+rank+'</div>'
+  +'<div class="nm"><h3>'+esc(l.name)+'</h3><div class="ad">'+esc(l.address||'')+'</div></div>'
+  +'<div class="sc '+b+'"><b>'+l.score+'</b><span>'+esc(v.t)+'</span></div></div>'
+  +'<div class="tags">'+tags+'</div>'+probe
+  +'<div class="msg'+(l.msgOpen?' on':'')+'"><div class="msgh"><span class="l">A mensagem que você manda</span>'
+  +(nome?'':'<span class="warn">Precisa do perfil pra ela se apresentar</span>')
+  +'<span style="flex:1"></span><button class="act act-ver" data-i="'+i+'">Trocar versão</button>'
+  +'<button class="act act-copymsg" data-i="'+i+'">Copiar mensagem</button></div>'
+  +'<div class="msgbody">'+esc(buildMessage(l,l.ver||0))+'</div></div>'
+  +'<div class="acts"><button class="act prime act-msg" data-i="'+i+'">'
+  +(l.msgOpen?'Fechar':'Escrever pra este cliente')+'</button>'
+  +(l.website?'<a class="act" href="'+esc(l.website)+'" target="_blank" rel="noopener">Abrir o site</a>':'')
+  +(l.maps?'<a class="act" href="'+esc(l.maps)+'" target="_blank" rel="noopener">Google →</a>':'')
+  +(wa?'<a class="act" href="'+esc(wa)+'" target="_blank" rel="noopener">WhatsApp →</a>':'')
+  +'<a class="act" href="'+esc(adlib)+'" target="_blank" rel="noopener">Anuncia?</a></div></article>';
+}
+
+function visible(){
+  return LEADS.filter(function(l){
+    if(FILTER==='prio')return l.score>=78;
+    if(FILTER==='nosite')return !l.website;
+    if(FILTER==='site')return !!l.website;
+    return true;}).sort(function(a,b){return b.score-a.score;});
+}
+function render(){
+  if(!LEADS.length){$('resultsSection').style.display='none';return;}
+  $('resultsSection').style.display='block';
+  var list=visible();
+  $('list').innerHTML=list.length?list.map(function(l,i){return cardHTML(l,LEADS.indexOf(l),i+1);}).join('')
+    :'<div class="blank">Nada nesse filtro.</div>';
+  var no=LEADS.filter(function(l){return !l.website;}).length;
+  var com=LEADS.filter(function(l){return !!l.website;}).length;
+  var prio=LEADS.filter(function(l){return l.score>=78;}).length;
+  $('tTotal').textContent=LEADS.length;$('tNo').textContent=no;
+  $('tSite').textContent=com;$('tFone').textContent=LEADS.filter(function(l){return !!l.phone;}).length;
+  $('cAll').textContent=LEADS.length;$('cNo').textContent=no;$('cSite').textContent=com;$('cPrio').textContent=prio;
+}
+$('chips').addEventListener('click',function(e){var c=e.target.closest('.chip');if(!c)return;
+  [].forEach.call(this.querySelectorAll('.chip'),function(x){x.classList.remove('on');});
+  c.classList.add('on');FILTER=c.dataset.f;render();});
+$('list').addEventListener('click',function(e){
+  var d=e.target.closest('.act-deep');if(d)return runDeep(+d.dataset.i);
+  var m=e.target.closest('.act-msg');
+  if(m){var l=LEADS[+m.dataset.i];l.msgOpen=!l.msgOpen;render();return;}
+  var v=e.target.closest('.act-ver');
+  if(v){var L=LEADS[+v.dataset.i];L.ver=(L.ver||0)+1;render();toast('Versão '+((L.ver%2)+1));return;}
+  var c=e.target.closest('.act-copymsg');
+  if(c){var q=LEADS[+c.dataset.i];navigator.clipboard.writeText(buildMessage(q,q.ver||0))
+    .then(function(){toast('Mensagem copiada');},function(){toast('Não deu pra copiar');});}
+});
+$('again').addEventListener('click',function(){
+  LEADS=[];document.body.classList.remove('done');$('resultsSection').style.display='none';
+  $('tape').style.display='none';$('tape').innerHTML='';eyebrow('01','BUSCA');
+  counting('Aguardando alvo');window.scrollTo({top:0,behavior:'smooth'});});
+
+/* ---------- varredura ---------- */
+async function run(){
+  if(RUNNING){ABORT=true;logLine('Parando…','bad');return;}
+  var key=$('key').value.trim(),nicho=$('nicho').value.trim(),cid=cidadeAtual();
+  $('errBox').innerHTML='';
+  if(!key){showError('Falta a chave','Abra "Perfil e chave" no topo e cole a sua Google API key.');
+    $('cfg').classList.add('on');$('btnCfg').classList.add('filled');return;}
+  if(!nicho)return showError('Falta o nicho','Escreva o tipo de negócio que você quer prospectar.');
+  if(SCOPE==='cidade'&&!cid)return showError('Falta a cidade','Escolha uma cidade na lista.');
+  ['key','nicho','pNome','pFaz'].forEach(function(f){store.set('radar:'+f,$(f).value.trim());});
+  store.set('radar:cidadeSel',$('cidade').value);
+
+  RUNNING=true;ABORT=false;LEADS=[];FILTER='all';
+  [].forEach.call($('chips').querySelectorAll('.chip'),function(x){x.classList.toggle('on',x.dataset.f==='all');});
+  document.body.classList.add('scanning');document.body.classList.remove('done');
+  $('run').textContent='Parar';$('run').classList.add('stop');
+  $('resultsSection').style.display='none';$('tape').innerHTML='';
+  eyebrow('02','VARREDURA');
+  var wanted=parseInt($('qtd').value,10),minRev=parseInt($('minRev').value,10)||0;
+  var minRating=parseFloat($('minRating').value)||0;
+
+  try{
+    var raw=[];
+    if(SCOPE==='brasil'){
+      counting('Varrendo · 10 capitais');logLine('Varrendo '+nicho+' nas 10 maiores capitais','hi');
+      for(var i=0;i<CAPITAIS.length&&!ABORT;i++){
+        var cap=CAPITAIS[i];logLine('Praça '+(i+1)+'/10 · '+cap.n);
+        counting('Varrendo · '+cap.n);
+        var r=await searchOnce(key,nicho+' em '+cap.n,{lat:cap.lat,lng:cap.lng,r:30000},20);
+        r.forEach(function(p){p.__praca=cap.n;});raw=raw.concat(r);}
+      logLine('Juntando 10 praças e tirando repetidos');
+    } else if(SCOPE==='perto'){
+      counting('Localizando você');logLine('Pedindo a sua localização ao navegador');
+      var g=await getGeo();
+      logLine('Posição obtida · raio de '+(RAIO/1000)+' km','done');
+      counting('Varrendo · '+(RAIO/1000)+' km ao redor');
+      logLine('Varrendo '+nicho+' num raio de '+(RAIO/1000)+' km','hi');
+      raw=await searchOnce(key,nicho,{lat:g.lat,lng:g.lng,r:RAIO},wanted);
+    } else {
+      counting('Varrendo · '+cid);logLine('Varrendo '+nicho+' em '+cid,'hi');
+      raw=await searchOnce(key,nicho+' em '+cid,null,wanted);
+    }
+
+    var seen={};
+    LEADS=raw.filter(function(p){if(!p.id||seen[p.id])return false;seen[p.id]=1;return true;})
+      .map(function(p){return{name:(p.displayName&&p.displayName.text)||'Sem nome',
+        address:p.formattedAddress||'',website:p.websiteUri||null,rating:p.rating||0,
+        reviews:p.userRatingCount||0,phone:p.nationalPhoneNumber||null,maps:p.googleMapsUri||null,
+        praca:p.__praca||null,category:(p.primaryTypeDisplayName&&p.primaryTypeDisplayName.text)||null,
+        pre:null,audit:null,deep:false,deepRunning:false,msgOpen:false,ver:0};})
+      .filter(function(l){return l.reviews>=minRev&&(minRating?l.rating>=minRating:true);});
+    LEADS.forEach(computeScore);
+    logLine('Encontrados '+LEADS.length+' negócios','done');
+    counting('Varrendo · '+LEADS.length+' negócios');
+    logLine('Separando quem não tem site de quem tem site pra avaliar');
+
+    if(!LEADS.length){logLine('Nada passou nos filtros','bad');
+      showError('Nada encontrado','Achei '+raw.length+' negócios, mas nenhum passou nos filtros. Baixe o movimento mínimo ou a nota mínima.');
+      return finish();}
+
+    var pend=LEADS.filter(function(l){return !!l.website;});
+    if(pend.length){
+      logLine('Batendo na porta de '+pend.length+' sites','hi');
+      var done=0,idx=0;
+      async function w(){while(idx<pend.length&&!ABORT){var l=pend[idx++];
+        try{l.pre=await precheck(l.website);}catch(e){l.pre={alive:false,ms:0};}
+        computeScore(l);done++;counting('Checando · '+done+' de '+pend.length);
+        if(!l.pre.alive)logLine(l.name+' · não respondeu','bad');}}
+      var pool=[];for(var k=0;k<6;k++)pool.push(w());
+      await Promise.all(pool);
+    }
+    logLine('Varredura concluída · '+LEADS.length+' negócios, '+LEADS.filter(function(l){return !l.website;}).length+' sem site','done');
+    logLine('Abra a análise profunda só nos que você vai abordar.');
+    var onde=SCOPE==='brasil'?'no Brasil':SCOPE==='perto'?'na sua região':'em '+cid;
+    $('rTitle').textContent=nicho.charAt(0).toUpperCase()+nicho.slice(1)+' '+onde;
+    $('rSub').textContent=LEADS.length+' negócios · '+LEADS.filter(function(l){return !l.website;}).length+' sem site';
+    eyebrow('03','RESULTADO');counting(LEADS.length+' negócios encontrados');
+    document.body.classList.add('done');
+    render();
+    setTimeout(function(){$('resultsSection').scrollIntoView({behavior:'smooth',block:'start'});},350);
+  }catch(err){
+    var m=err.message||String(err),dica='';
+    if(/API key not valid|API_KEY_INVALID/i.test(m))dica=' Confira se copiou a chave inteira.';
+    else if(/not been used|disabled|SERVICE_DISABLED/i.test(m))dica=' Habilite Places API (New) e PageSpeed Insights API no Google Cloud.';
+    else if(/referer|blocked|PERMISSION_DENIED/i.test(m))dica=' A restrição de referrer da chave pode estar bloqueando este domínio.';
+    showError('A varredura parou',m+dica);logLine('Erro: '+m,'bad');eyebrow('01','BUSCA');
+  }
+  finish();
+}
+function finish(){RUNNING=false;ABORT=false;document.body.classList.remove('scanning');
+  $('run').textContent=runLabel();$('run').classList.remove('stop');}
+$('run').addEventListener('click',run);
+
+$('copyList').addEventListener('click',function(){
+  if(!LEADS.length)return toast('Nada pra copiar');
+  var t=visible().map(function(l,i){return (i+1)+'. '+l.name+' — '+verdict(l).t.toUpperCase()+' (radar '+l.score+')'
+    +'\n   '+(l.address||'')+'\n   '+(l.phone||'sem telefone')+' · '+(l.website||'SEM SITE')
+    +'\n   '+(l.rating?l.rating.toFixed(1):'—')+' com '+(l.reviews||0)+' avaliações · '+finding(l).curto;}).join('\n\n');
+  navigator.clipboard.writeText(t).then(function(){toast('Lista copiada');},function(){toast('Não deu pra copiar');});});
+$('csv').addEventListener('click',function(){
+  if(!LEADS.length)return toast('Nada pra exportar');
+  var head=['Radar','Veredito','Achado','Nome','Categoria','Praca','Endereco','Telefone','Site','Nota Google',
+    'Avaliacoes','Abriu em (s)','Desempenho','SEO','Acessibilidade','Boas praticas','Nota do site','Maps'];
+  var rows=visible().map(function(l){var a=(l.audit&&!l.audit.failed)?l.audit:{};
+    return [l.score,verdict(l).t,finding(l).curto,l.name,l.category||'',l.praca||'',l.address||'',l.phone||'',
+      l.website||'SEM SITE',l.rating||'',l.reviews||0,l.pre?(l.pre.ms/1000).toFixed(2):'',
+      a.perf==null?'':a.perf,a.seo==null?'':a.seo,a.a11y==null?'':a.a11y,a.bp==null?'':a.bp,
+      l.quality==null?'':l.quality,l.maps||''];});
+  var csv=[head].concat(rows).map(function(r){return r.map(function(c){
+    return '"'+String(c==null?'':c).replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));
+  a.download='radar-'+($('nicho').value.trim().replace(/\s+/g,'-').toLowerCase()||'lista')+'.csv';
+  a.click();URL.revokeObjectURL(a.href);toast('CSV baixado');});
+})();
+</script>
+</body>
+</html>
