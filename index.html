@@ -295,6 +295,28 @@ h1.q .cur{width:.42em;vertical-align:-.06em}
 h1.q{min-height:1.04em}
 .lede{min-height:3.3em}
 @media(max-width:600px){.lede{min-height:5em}}
+
+.hintlab{float:right;letter-spacing:.1em;color:var(--tx-3);text-transform:none;font-size:8.5px}
+
+/* ---- print do antes ---- */
+.shot{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:13px;background:var(--bg)}
+.shot img{width:100%;max-height:230px;object-fit:cover;object-position:top;display:block}
+.shotbar{display:flex;align-items:center;gap:10px;padding:9px 12px;border-top:1px solid var(--line);
+  background:var(--bg-2);flex-wrap:wrap}
+.shotbar span{flex:1;min-width:130px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx-3)}
+
+/* ---- faixa de preço ---- */
+.preco{margin:0 19px 15px;border:1px solid rgba(56,193,114,.35);border-radius:16px;padding:13px 16px;
+  background:rgba(56,193,114,.06)}
+@media(max-width:600px){.preco{margin:0 15px 13px}}
+.preco .pl{display:block;font-size:8.5px;letter-spacing:.17em;text-transform:uppercase;color:var(--tx-3)}
+.preco b{display:block;font-family:var(--disp);font-weight:400;font-size:21px;letter-spacing:-.01em;
+  color:var(--green);margin:5px 0 4px}
+.preco .pw{font-size:9.5px;letter-spacing:.09em;color:var(--tx-3)}
+
+.chk{display:flex;align-items:flex-start;gap:10px;margin-top:18px;cursor:pointer}
+.chk input{margin-top:2px;accent-color:var(--red);width:15px;height:15px;flex-shrink:0}
+.chk span{font-size:11px;line-height:1.5;color:var(--tx-2)}
 </style>
 </head>
 <body>
@@ -326,20 +348,21 @@ h1.q{min-height:1.04em}
 
   <div class="tabs">
     <button class="tab on" id="tabScan">Varredura</button>
-    <button class="tab" id="tabSaved">Minha lista <i id="tabCount">0</i></button>
+    <button class="tab" id="tabSaved">Minha lista <i id="tabCount">0</i><span class="due-badge" id="tabDue" style="display:none"></span></button>
   </div>
 
   <div id="savedView">
     <div class="savedhead"><h2>Minha lista</h2><p id="savedSub">nenhum cliente salvo ainda</p></div>
     <div class="tally">
       <div><b id="sTot">0</b><span>salvos</span></div>
-      <div><b id="sEnv">0</b><span>enviados</span></div>
+      <div class="hot"><b id="sEnv">0</b><span>cobrar agora</span></div>
       <div><b id="sResp">0</b><span>responderam</span></div>
       <div class="hot"><b id="sFech">0</b><span>fecharam</span></div>
     </div>
     <div class="chips" id="savedChips">
       <button class="chip on" data-s="all">Todos</button>
       <button class="chip" data-s="salvo">Salvos</button>
+      <button class="chip" data-s="cobrar">Cobrar hoje <i id="cCobrar">0</i></button>
       <button class="chip" data-s="enviado">Enviados</button>
       <button class="chip" data-s="respondeu">Responderam</button>
       <button class="chip" data-s="fechou">Fecharam</button>
@@ -401,16 +424,9 @@ h1.q{min-height:1.04em}
       </div>
 
       <div class="field">
-        <span class="lab">Nicho</span>
-        <input type="text" id="nicho" list="nichos" placeholder="clínica odontológica">
-        <datalist id="nichos">
-          <option value="dentista e odontologia"><option value="nutricionista">
-          <option value="clínica de estética e beleza"><option value="fisioterapia">
-          <option value="psicologia"><option value="advocacia"><option value="veterinária">
-          <option value="contabilidade"><option value="imobiliária"><option value="academia">
-          <option value="salão e barbearia"><option value="restaurante"><option value="clínica médica">
-          <option value="pet shop"><option value="arquitetura e interiores"><option value="oficina mecânica">
-        </datalist>
+        <span class="lab">Nicho <span class="hintlab">agrupado por quanto paga</span></span>
+        <select id="nichoSel"></select>
+        <input type="text" id="nicho" placeholder="digite o nicho" style="display:none;margin-top:9px">
       </div>
 
       <div class="three">
@@ -425,6 +441,9 @@ h1.q{min-height:1.04em}
             <option value="4">4,0 ★ ou mais</option><option value="4.5">4,5 ★ ou mais</option></select></div>
       </div>
       <p class="note" id="filtroNota">Movimento é quantas pessoas avaliaram — é o sinal de que o negócio fatura. Nota é a média de estrelas.</p>
+
+      <label class="chk"><input type="checkbox" id="doHtml" checked>
+        <span>Na análise profunda, ler o código do site: pixel de anúncio, WhatsApp, e-mail e plataforma. Passa por proxy público e às vezes falha.</span></label>
 
       <button class="cta" id="run">Varrer a cidade</button>
     </div>
@@ -510,6 +529,8 @@ var CHAVE_FIXA = '';
    conferir de relance se o navegador está servindo a versão nova
    ou um cache velho.
 
+   2.0  04/09/2026  print do antes, follow-up, faixa de preço, nichos
+                    por ticket, nível de preço do Google, inspeção do HTML
    1.9  04/09/2026  máquina de escrever com cursor de bloco
    1.8  04/09/2026  corrige o selo de versão, que não pintava na abertura
    1.7  04/09/2026  mapa com pino e círculo de alcance no "perto de mim"
@@ -521,7 +542,7 @@ var CHAVE_FIXA = '';
    1.1  21/08/2026  duas etapas de medição, mensagem pronta
    1.0  21/08/2026  primeira versão
    ============================================================ */
-var VERSAO = '1.9';
+var VERSAO = '2.0';
 var BUILD  = '04/09/2026';
 
 /* a chave em uso: o campo tem prioridade, a embutida é o padrão */
@@ -532,6 +553,73 @@ function getKey(){
 var LEADS=[],RUNNING=false,ABORT=false,FILTER='all',SCOPE='cidade',RAIO=10000,TRAZER='todos';
 var $=function(i){return document.getElementById(i);};
 
+/* ============================================================
+   NICHOS E TICKET
+
+   O peso multiplica a faixa de preço sugerida. Implante dentário
+   e harmonização pagam muito mais que barbearia com o mesmo
+   esforço de abordagem — a lista está agrupada por isso pra você
+   prospectar onde tem dinheiro, não onde é fácil.
+
+   Ajuste os pesos e a tabela PRECOS conforme fechar negócio.
+   Os números são ponto de partida, não verdade de mercado.
+   ============================================================ */
+var NICHOS={
+ 'Ticket alto':[
+  ['implante dentário',1.5],['harmonização facial',1.5],['cirurgia plástica',1.5],
+  ['clínica de fertilidade',1.5],['oftalmologia',1.4],['dermatologia',1.4],
+  ['ortodontia',1.4],['advocacia previdenciária',1.4],['advocacia empresarial',1.4],
+  ['arquitetura e interiores',1.35],['contabilidade para empresas',1.3],
+  ['imobiliária de alto padrão',1.35],['psiquiatria',1.3],['clínica de estética avançada',1.35]
+ ],
+ 'Ticket médio':[
+  ['dentista e odontologia',1.0],['clínica médica',1.1],['fisioterapia',1.0],
+  ['nutricionista',0.95],['psicologia',0.95],['advocacia',1.05],['contabilidade',1.0],
+  ['imobiliária',1.05],['veterinária',1.0],['academia e crossfit',0.95],
+  ['escola de idiomas',0.95],['buffet e eventos',1.0],['ótica',0.95],['oficina mecânica',0.9]
+ ],
+ 'Ticket básico':[
+  ['salão e barbearia',0.7],['pet shop',0.75],['restaurante',0.8],
+  ['padaria e confeitaria',0.7],['loja de roupas',0.75],['lanchonete',0.65]
+ ]
+};
+function pesoNicho(txt){
+  txt=(txt||'').toLowerCase();
+  var achou=null;
+  Object.keys(NICHOS).forEach(function(g){
+    NICHOS[g].forEach(function(par){ if(par[0]===txt) achou=par[1]; });
+  });
+  return achou||1.0;   /* nicho digitado à mão entra como médio */
+}
+
+/* ============================================================
+   FAIXA DE PREÇO
+
+   base = o serviço · demanda = quanto o negócio fatura
+   nicho = quanto aquele mercado paga · faixa = o nível de preço
+   do estabelecimento no Google
+
+   Calibre a base com o que você realmente cobra.
+   ============================================================ */
+var PRECOS={
+  'Criar do zero':1800, 'Refazer inteiro':2100, 'Refazer':1500,
+  'Só ajustar':800, 'Site pra avaliar':1500, 'Avaliar':1500, 'Deixar pra lá':0
+};
+function faixaPreco(l){
+  var base=PRECOS[verdict(l).t]||0;
+  if(!base)return null;
+  var rc=l.reviews||0;
+  var dem = rc<20?0.7 : rc<50?0.85 : rc<150?1.0 : rc<400?1.2 : 1.4;
+  var niv = l.priceLevel==='PRICE_LEVEL_VERY_EXPENSIVE'?1.35
+          : l.priceLevel==='PRICE_LEVEL_EXPENSIVE'?1.2
+          : l.priceLevel==='PRICE_LEVEL_INEXPENSIVE'?0.85 : 1.0;
+  var min=base*dem*pesoNicho(l.nicho||$('nicho').value)*niv;
+  var arred=function(v){return Math.round(v/100)*100;};
+  return {min:arred(min), max:arred(min*1.6)};
+}
+function reais(v){return 'R$ '+v.toLocaleString('pt-BR');}
+
+
 /* ---------- cidades ---------- */
 var CIDADES={
  'Sul':['Curitiba, PR','Porto Alegre, RS','Florianópolis, SC','Joinville, SC','Londrina, PR','Caxias do Sul, RS','Maringá, PR','Blumenau, SC','Pelotas, RS','Criciúma, SC','Chapecó, SC','Cascavel, PR','Canoas, RS','Ponta Grossa, PR','Itajaí, SC','Foz do Iguaçu, PR','Santa Maria, RS','São José, SC'],
@@ -540,6 +628,27 @@ var CIDADES={
  'Centro-Oeste':['Brasília, DF','Goiânia, GO','Campo Grande, MS','Cuiabá, MT','Aparecida de Goiânia, GO','Anápolis, GO','Várzea Grande, MT','Dourados, MS','Rio Verde, GO','Palmas, TO'],
  'Norte':['Manaus, AM','Belém, PA','Porto Velho, RO','Macapá, AP','Rio Branco, AC','Boa Vista, RR','Ananindeua, PA','Santarém, PA','Marabá, PA','Parintins, AM']
 };
+(function(){
+  var sel=$('nichoSel'),h='';
+  Object.keys(NICHOS).forEach(function(g){
+    h+='<optgroup label="'+g+'">';
+    NICHOS[g].forEach(function(par){h+='<option value="'+par[0]+'">'+par[0]+'</option>';});
+    h+='</optgroup>';
+  });
+  h+='<optgroup label="Outro"><option value="__custom">Digitar outro nicho…</option></optgroup>';
+  sel.innerHTML=h;
+  sel.value='dentista e odontologia';
+  $('nicho').value=sel.value;
+  sel.addEventListener('change',function(){
+    if(this.value==='__custom'){
+      $('nicho').style.display='block';$('nicho').value='';$('nicho').focus();
+    } else {
+      $('nicho').style.display='none';$('nicho').value=this.value;
+      store.set('radar:nicho',this.value);
+    }
+  });
+})();
+
 (function(){
   var s=$('cidade'),h='';
   Object.keys(CIDADES).forEach(function(reg){
@@ -590,6 +699,11 @@ if(CHAVE_FIXA){
   cx.value='';cx.placeholder='chave embutida no código';cx.disabled=true;
   cx.parentNode.classList.add('locked');
 }
+(function(){var n=store.get('radar:nicho');
+  if(n){try{
+    if($('nichoSel').querySelector('option[value="'+CSS.escape(n)+'"]')){$('nichoSel').value=n;$('nicho').value=n;}
+    else{$('nichoSel').value='__custom';$('nicho').style.display='block';$('nicho').value=n;}
+  }catch(e){}}})();
 (function(){var c=store.get('radar:cidadeSel');
   if(c){try{if($('cidade').querySelector('option[value="'+CSS.escape(c)+'"]'))$('cidade').value=c;}catch(e){}}})();
 
@@ -599,9 +713,34 @@ var HIST=store.getJSON('radar:hist',{});
 var SFILTER='all', VIEW='scan';
 var LABELS={salvo:'Salvo',enviado:'Enviado',respondeu:'Respondeu',fechou:'Fechou',descartado:'Descartado'};
 
+/* ---------- follow-up ---------- */
+function hojeISO(){var d=new Date();return d.toISOString().slice(0,10);}
+function maisDias(n){var d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);}
+function venceu(x){
+  if(!x.retomar)return false;
+  if(x.status==='fechou'||x.status==='descartado')return false;
+  return x.retomar<=hojeISO();
+}
+function quandoCobrar(x){
+  if(!x.retomar)return '';
+  var h=hojeISO();
+  if(x.retomar<h){
+    var dias=Math.round((new Date(h)-new Date(x.retomar))/86400000);
+    return 'atrasado '+dias+(dias===1?' dia':' dias');
+  }
+  if(x.retomar===h)return 'cobrar hoje';
+  var f=Math.round((new Date(x.retomar)-new Date(h))/86400000);
+  return 'em '+f+(f===1?' dia':' dias');
+}
+
 function persistSaved(){store.setJSON('radar:saved',SAVED);
   if(!store.ok&&typeof ensureRoom==='function')ensureRoom();updateTabCount();}
-function updateTabCount(){$('tabCount').textContent=Object.keys(SAVED).length;}
+function updateTabCount(){
+  $('tabCount').textContent=Object.keys(SAVED).length;
+  var due=Object.keys(SAVED).map(function(k){return SAVED[k];}).filter(venceu).length;
+  var b=$('tabDue');
+  if(b){b.textContent=due?due:'';b.style.display=due?'inline-block':'none';}
+}
 function markHist(ids){
   var now=Date.now();ids.forEach(function(id){HIST[id]=now;});
   var keys=Object.keys(HIST);
@@ -626,7 +765,13 @@ function toggleSave(i){
 }
 function setStatus(id,st){
   if(!SAVED[id])return;
-  SAVED[id].status=st;SAVED[id].updatedAt=Date.now();persistSaved();
+  SAVED[id].status=st;SAVED[id].updatedAt=Date.now();
+  /* prospecção fria fecha no terceiro ou quarto contato, não no primeiro.
+     Assim que sai a mensagem, já nasce a data pra cobrar. */
+  if(st==='enviado'&&!SAVED[id].retomar)SAVED[id].retomar=maisDias(3);
+  if(st==='respondeu')SAVED[id].retomar=maisDias(2);
+  if(st==='fechou'||st==='descartado')SAVED[id].retomar='';
+  persistSaved();
   if(VIEW==='saved')renderSaved();else render();
   toast(LABELS[st]);
 }
@@ -773,7 +918,7 @@ function getGeo(){return new Promise(function(res,rej){
 /* ---------- places ---------- */
 var FIELDS=['places.id','places.displayName','places.formattedAddress','places.websiteUri','places.rating',
  'places.userRatingCount','places.nationalPhoneNumber','places.googleMapsUri','places.businessStatus',
- 'places.primaryTypeDisplayName','nextPageToken'].join(',');
+ 'places.primaryTypeDisplayName','places.priceLevel','nextPageToken'].join(',');
 async function searchOnce(key,query,bias,wanted){
   var out=[],token=null,g=0;
   while(out.length<wanted&&g<3){g++;
@@ -799,6 +944,60 @@ async function precheck(url){
   }catch(e){ return {ms:performance.now()-t0,alive:false}; }
 }
 
+/* ============================================================
+   INSPEÇÃO DO HTML
+
+   O navegador não lê o HTML de outro domínio, então isso passa
+   por proxy público. Proxy público cai — por isso são dois em
+   cascata, e por isso a ferramenta funciona inteira sem ele.
+
+   O que sai daqui: pixel de anúncio (verba aprovada + dor
+   consciente = melhor sinal que existe), WhatsApp, e-mail,
+   plataforma e último ano de copyright.
+   ============================================================ */
+var PROXIES=[
+  function(u){return 'https://api.allorigins.win/raw?url='+encodeURIComponent(u);},
+  function(u){return 'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u);}
+];
+async function inspecionar(url){
+  for(var i=0;i<PROXIES.length;i++){
+    try{
+      var ctrl=new AbortController();
+      var t=setTimeout(function(){ctrl.abort();},12000);
+      var r=await fetch(PROXIES[i](url),{signal:ctrl.signal});
+      clearTimeout(t);
+      if(!r.ok)continue;
+      var bruto=(await r.text()).slice(0,400000);
+      if(bruto.length<200)continue;
+      var h=bruto.toLowerCase();
+
+      var email=(bruto.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)||[])[0]||null;
+      if(email&&/\.(png|jpe?g|gif|svg|webp|css|js)$/i.test(email))email=null;
+
+      var anos=(h.match(/(?:\u00a9|&copy;|copyright)[^0-9]{0,12}(20\d\d)/g)||[])
+                 .map(function(x){return (x.match(/20\d\d/)||[])[0];}).filter(Boolean).sort();
+
+      return {
+        ok:true,
+        pixelMeta:/fbq\s*\(|connect\.facebook\.net|fbevents/.test(h),
+        pixelGoogle:/gtag\s*\(|googletagmanager\.com|google-analytics\.com/.test(h),
+        whatsapp:/wa\.me|api\.whatsapp|whatsapp:\/\//.test(h),
+        email:email,
+        plataforma:/wix\.com|static\.parastorage/.test(h)?'Wix'
+                  :/elementor/.test(h)?'WordPress + Elementor'
+                  :/wp-content|wp-includes/.test(h)?'WordPress'
+                  :/squarespace/.test(h)?'Squarespace'
+                  :/webflow/.test(h)?'Webflow'
+                  :/shopify/.test(h)?'Shopify'
+                  :/framerusercontent/.test(h)?'Framer':null,
+        ano:anos.length?anos[anos.length-1]:null
+      };
+    }catch(e){ /* cai pro próximo proxy */ }
+  }
+  return {ok:false};
+}
+function temPixel(l){return !!(l.html&&l.html.ok&&(l.html.pixelMeta||l.html.pixelGoogle));}
+
 /* ---------- etapa 2: análise profunda ---------- */
 var FASES=[{t:'Abrindo a página com o foco no celular',to:18},
  {t:'Medindo quanto tempo a tela principal demora',to:38},
@@ -816,7 +1015,10 @@ async function pagespeed(key,url){
   return {failed:false,perf:pk('performance'),seo:pk('seo'),a11y:pk('accessibility'),bp:pk('best-practices'),
     lcp:a['largest-contentful-paint']?a['largest-contentful-paint'].displayValue:null,
     cls:a['cumulative-layout-shift']?a['cumulative-layout-shift'].displayValue:null,
-    viewport:a['viewport']?a['viewport'].score:null};
+    viewport:a['viewport']?a['viewport'].score:null,
+    /* o Lighthouse já devolve o print da página renderizada no celular.
+       Vem junto da categoria de performance que a gente já pede: custo zero. */
+    shot:(a['final-screenshot']&&a['final-screenshot'].details&&a['final-screenshot'].details.data)||null};
 }
 async function runDeep(i){
   var l=LEADS[i];if(!l.website||l.deepRunning)return;
@@ -831,6 +1033,10 @@ async function runDeep(i){
   var tick=setInterval(function(){if(f<FASES.length-1)f++;
     fill.style.width=FASES[f].to+'%';lab.textContent=FASES[f].t;pct.textContent=FASES[f].to+'%';},2600);
   try{l.audit=await pagespeed(key,l.website);}catch(e){l.audit={failed:true};}
+  if($('doHtml').checked&&l.audit&&!l.audit.failed){
+    if(lab)lab.textContent='Lendo o código do site';
+    try{l.html=await inspecionar(l.website);}catch(e){l.html={ok:false};}
+  }
   clearInterval(tick);
   l.deepRunning=false;l.deep=true;computeScore(l);
   logLine(l.name+' · '+finding(l).curto,l.audit.failed?'bad':'done');
@@ -857,6 +1063,8 @@ function computeScore(l){
   else if(l.pre&&!l.pre.alive)gap=88;
   else if(l.pre&&l.pre.ms>2500)gap=62;
   else gap=48;
+  /* quem já paga anúncio sente a dor mais forte e tem verba aprovada */
+  if(temPixel(l))gap=Math.min(100,gap+6);
   l.quality=q;
   var G=Math.max(gap,1)/100,D=Math.max(demand,1)/100;
   l.score=Math.round(100*Math.pow(G,0.55)*Math.pow(D,0.45));
@@ -914,8 +1122,10 @@ function buildMessage(l,v){
     P.push('O QUE RECRIEI: nada, e é de propósito. Prefiro chegar quando eu tiver algo pra somar.');
   } else {
     P.push('Oi, '+s+'! O site de vocês está trabalhando contra vocês: '+(f.abre||f.frase)+'.');P.push('');
-    P.push(direto?'Quase todo mundo que procura '+nicho+' faz isso no celular, no meio de outra coisa, com pressa. A pessoa não avisa que desistiu: ela volta pro Google e clica no de baixo. Essa visita não aparece em lugar nenhum: não dá pra sentir falta do que você não vê.'
+    P.push(direto?'Quase todo mundo que procura '+nicho+' faz isso no celular, no meio de outra coisa, com pressa. A pessoa não avisa que desistiu: ela volta pro Google e clica no de baixo. '+(temPixel(l)?'Vocês pagaram por essa visita e nem souberam dela.':'Essa visita não aparece em lugar nenhum: não dá pra sentir falta do que você não vê.')
       :'Vocês têm '+l.reviews+' avaliações e '+(l.rating?l.rating.toFixed(1):'—')+' de nota, então a reputação já está feita. O gargalo não é atrair, é o que acontece nos primeiros segundos depois que a pessoa clica.');
+    if(temPixel(l)){P.push('');
+      P.push('E vocês já pagam anúncio — o pixel está instalado no site. Ou seja: o dinheiro sai, a pessoa chega, e trava na primeira tela.');}
     P.push('');P.push('A primeira tela decide antes de qualquer texto ser lido. É ali que a conversa é ganha ou perdida.');P.push('');
     P.push('Peguei a primeira tela e refiz, resolvendo isso. Segue o antes e o depois aqui embaixo. Dá uma olhada e me diz se os serviços que listei são os que vocês mais fazem.');P.push('');
     P.push('É seu, sem compromisso nenhum. Se quiser, eu passo por cada parte com você e edito o que não fizer sentido.');P.push('');
@@ -936,6 +1146,12 @@ function tagsOf(l){
     if(a.perf!=null&&a.perf<40)t.push({t:'Site lento pra doer',c:'red'});
     else if(a.perf!=null&&a.perf<60)t.push({t:'Site lento',c:'red'});
     if(a.seo!=null&&a.seo<70)t.push({t:'Não aparece no Google',c:'red'});
+  }
+  if(l.html&&l.html.ok){
+    if(temPixel(l))t.push({t:'Já paga anúncio'+(l.html.pixelMeta&&l.html.pixelGoogle?'':(l.html.pixelMeta?' · Meta':' · Google')),c:'green'});
+    if(!l.html.whatsapp)t.push({t:'Sem WhatsApp no site',c:'red'});
+    if(l.html.plataforma)t.push({t:'Feito no '+l.html.plataforma,c:''});
+    if(l.html.ano&&parseInt(l.html.ano,10)<=new Date().getFullYear()-2)t.push({t:'Parado desde '+l.html.ano,c:'red'});
   }
   if(l.rating&&l.reviews)t.push({t:l.rating.toFixed(1)+' · '+l.reviews+' avaliações',c:''});
   if(l.reviews>=150)t.push({t:'Muito movimento',c:'green'});
@@ -1049,7 +1265,11 @@ function cardHTML(l,i,rank){
     var dot='',txt='Site não checado';
     if(l.deep&&l.audit&&!l.audit.failed){
       var q=l.quality,qc=q>=80?'good':q>=50?'mid':'bad';
-      probe='<div class="probe"><div class="r1"><span class="big '+qc+'" data-count="'+q+'" data-ckey="q'+esc(l.id||i)+'">0</span>'
+      probe='<div class="probe">'
+        +(l.audit.shot?'<div class="shot"><img src="'+l.audit.shot+'" alt="Como o site abre no celular" loading="lazy">'
+          +'<div class="shotbar"><span>Como abre no celular hoje</span>'
+          +'<button class="mh-btn act-shot" data-i="'+i+'">Baixar o antes</button></div></div>':'')
+        +'<div class="r1"><span class="big '+qc+'" data-count="'+q+'" data-ckey="q'+esc(l.id||i)+'">0</span>'
         +'<span class="txt" style="font-size:9px;letter-spacing:.14em;text-transform:uppercase">nota do site</span></div>'
         +'<div class="r1" style="margin-top:9px"><span class="dot '+(q>=70?'ok':'bad')+'"></span>'
         +'<span class="txt">'+esc(f.frase.charAt(0).toUpperCase()+f.frase.slice(1))+'</span></div>'
@@ -1071,7 +1291,15 @@ function cardHTML(l,i,rank){
   +'<div class="nm"><h3>'+esc(l.name)+'</h3><div class="ad">'+esc(l.address||'')+'</div></div>'
   +'<div class="sc '+b+'"><b data-count="'+l.score+'" data-ckey="'+esc(l.id||('i'+i))+'">0</b>'
   +'<span>'+esc(v.t)+'</span></div></div>'
-  +'<div class="tags">'+tags+'</div>'+probe
+  +'<div class="tags">'+tags+'</div>'
+  +(function(){var fp=faixaPreco(l);if(!fp)return '';
+     return '<div class="preco"><span class="pl">faixa sugerida</span>'
+       +'<b>'+reais(fp.min)+' – '+reais(fp.max)+'</b>'
+       +'<span class="pw">'+esc(verdict(l).t.toLowerCase())+' · '+(l.reviews||0)+' avaliações'
+       +(l.priceLevel?' · '+({'PRICE_LEVEL_VERY_EXPENSIVE':'estabelecimento caro',
+          'PRICE_LEVEL_EXPENSIVE':'acima da média','PRICE_LEVEL_MODERATE':'faixa média',
+          'PRICE_LEVEL_INEXPENSIVE':'faixa popular'}[l.priceLevel]||''):'')+'</span></div>';})()
+  +probe
   +'<div class="msg'+(l.msgOpen?' on':'')+'"><div class="msgh"><span class="l">A mensagem que você manda</span>'
   +(nome?'':'<span class="warn">Precisa do perfil pra ela se apresentar</span>')
   +'<span style="flex:1"></span><button class="act act-ver" data-i="'+i+'">Trocar versão</button>'
@@ -1120,6 +1348,13 @@ $('list').addEventListener('click',function(e){
     return;}
   var v=e.target.closest('.act-ver');
   if(v){var L=LEADS[+v.dataset.i];L.ver=(L.ver||0)+1;render();toast('Versão '+((L.ver%2)+1));return;}
+  var sh=e.target.closest('.act-shot');
+  if(sh){var lz=LEADS[+sh.dataset.i];
+    if(lz.audit&&lz.audit.shot){var a=document.createElement('a');
+      a.href=lz.audit.shot;
+      a.download='antes-'+lz.name.replace(/[^a-z0-9]+/gi,'-').toLowerCase()+'.jpg';
+      a.click();toast('Print baixado');}
+    return;}
   var sb=e.target.closest('.act-save');
   if(sb)return toggleSave(+sb.dataset.i);
   var c=e.target.closest('.act-copymsg');
@@ -1137,8 +1372,13 @@ $('again').addEventListener('click',function(){
 /* ---------- view: minha lista ---------- */
 function savedArr(){
   return Object.keys(SAVED).map(function(k){return SAVED[k];})
-    .filter(function(x){return SFILTER==='all'?true:x.status===SFILTER;})
-    .sort(function(a,b){return (b.updatedAt||0)-(a.updatedAt||0);});
+    .filter(function(x){
+      if(SFILTER==='all')return true;
+      if(SFILTER==='cobrar')return venceu(x);
+      return x.status===SFILTER;})
+    .sort(function(a,b){
+      if(SFILTER==='cobrar')return (a.retomar||'')<(b.retomar||'')?-1:1;
+      return (b.updatedAt||0)-(a.updatedAt||0);});
 }
 function savedCardHTML(x){
   var wa=x.phone?'https://wa.me/55'+x.phone.replace(/\D/g,''):null;
@@ -1155,7 +1395,10 @@ function savedCardHTML(x){
   +(x.rating?'<span class="tag">'+x.rating.toFixed(1)+' · '+x.reviews+' avaliações</span>':'')
   +(x.praca?'<span class="tag">'+esc(x.praca)+'</span>':'')
   +(x.phone?'<span class="tag">'+esc(x.phone)+'</span>':'')+'</div>'
-  +'<div class="msg on"><div class="msgh"><span class="l">Anotação</span></div>'
+  +'<div class="msg on"><div class="msgh"><span class="l">Cobrar em</span>'
+  +'<input type="date" class="datein sv-date" data-id="'+esc(x.id)+'" value="'+esc(x.retomar||'')+'">'
+  +(x.retomar?'<span class="'+(venceu(x)?'due':'l')+'">'+esc(quandoCobrar(x))+'</span>':'')
+  +'<span style="flex:1"></span><button class="act sv-mais" data-id="'+esc(x.id)+'">+3 dias</button></div>'
   +'<textarea class="notebox sv-note" data-id="'+esc(x.id)+'" placeholder="O que rolou nesse contato…">'+esc(x.nota||'')+'</textarea></div>'
   +'<div class="acts">'
   +'<select class="statsel sv-stat" data-id="'+esc(x.id)+'">'+opts+'</select>'
@@ -1169,8 +1412,12 @@ function savedCardHTML(x){
 function renderSaved(){
   var all=Object.keys(SAVED).map(function(k){return SAVED[k];});
   var cnt=function(st){return all.filter(function(x){return x.status===st;}).length;};
-  setTally('sTot',all.length);setTally('sEnv',cnt('enviado'));
+  var due=all.filter(venceu).length;
+  setTally('sTot',all.length);setTally('sEnv',due);
   setTally('sResp',cnt('respondeu'));setTally('sFech',cnt('fechou'));
+  $('cCobrar').textContent=due;
+  $('tabDue').textContent=due?due:'';
+  $('tabDue').style.display=due?'inline-block':'none';
   $('savedSub').textContent=all.length?all.length+' clientes salvos':'nenhum cliente salvo ainda';
   var list=savedArr();
   $('savedList').innerHTML=list.length?list.map(savedCardHTML).join('')
@@ -1181,7 +1428,9 @@ $('savedChips').addEventListener('click',function(e){var c=e.target.closest('.ch
   [].forEach.call(this.querySelectorAll('.chip'),function(x){x.classList.remove('on');});
   c.classList.add('on');SFILTER=c.dataset.s;renderSaved();});
 $('savedList').addEventListener('change',function(e){
-  var st=e.target.closest('.sv-stat');if(st)return setStatus(st.dataset.id,st.value);});
+  var st=e.target.closest('.sv-stat');if(st)return setStatus(st.dataset.id,st.value);
+  var dt=e.target.closest('.sv-date');
+  if(dt&&SAVED[dt.dataset.id]){SAVED[dt.dataset.id].retomar=dt.value;persistSaved();renderSaved();}});
 $('savedList').addEventListener('input',function(e){
   var n=e.target.closest('.sv-note');
   if(n&&SAVED[n.dataset.id]){SAVED[n.dataset.id].nota=n.value;
@@ -1189,6 +1438,11 @@ $('savedList').addEventListener('input',function(e){
 $('savedList').addEventListener('click',function(e){
   var d=e.target.closest('.sv-del');
   if(d){delete SAVED[d.dataset.id];persistSaved();renderSaved();toast('Removido');return;}
+  var mm=e.target.closest('.sv-mais');
+  if(mm&&SAVED[mm.dataset.id]){var base=SAVED[mm.dataset.id].retomar||hojeISO();
+    var d=new Date(base);d.setDate(d.getDate()+3);
+    SAVED[mm.dataset.id].retomar=d.toISOString().slice(0,10);
+    persistSaved();renderSaved();toast('Adiado 3 dias');return;}
   var c=e.target.closest('.sv-copy');
   if(c&&SAVED[c.dataset.id]){navigator.clipboard.writeText(SAVED[c.dataset.id].msg||'')
     .then(function(){toast('Mensagem copiada');},function(){toast('Não deu pra copiar');});}});
@@ -1299,7 +1553,8 @@ async function run(){
         address:p.formattedAddress||'',website:p.websiteUri||null,rating:p.rating||0,
         reviews:p.userRatingCount||0,phone:p.nationalPhoneNumber||null,maps:p.googleMapsUri||null,
         praca:p.__praca||null,category:(p.primaryTypeDisplayName&&p.primaryTypeDisplayName.text)||null,
-        pre:null,audit:null,deep:false,deepRunning:false,msgOpen:false,ver:0};})
+        priceLevel:p.priceLevel||null,nicho:nicho,
+        pre:null,audit:null,html:null,deep:false,deepRunning:false,msgOpen:false,ver:0};})
       .filter(function(l){return l.reviews>=minRev&&(minRating?l.rating>=minRating:true);});
     if(TRAZER==='semsite'){
       var antes=LEADS.length;
@@ -1359,12 +1614,19 @@ $('copyList').addEventListener('click',function(){
 $('csv').addEventListener('click',function(){
   if(!LEADS.length)return toast('Nada pra exportar');
   var head=['Radar','Veredito','Achado','Nome','Categoria','Praca','Endereco','Telefone','Site','Nota Google',
-    'Avaliacoes','Abriu em (s)','Desempenho','SEO','Acessibilidade','Boas praticas','Nota do site','Maps'];
+    'Avaliacoes','Abriu em (s)','Desempenho','SEO','Acessibilidade','Boas praticas','Nota do site',
+    'Faixa min','Faixa max','Paga anuncio','WhatsApp no site','Plataforma','Email','Maps'];
   var rows=visible().map(function(l){var a=(l.audit&&!l.audit.failed)?l.audit:{};
     return [l.score,verdict(l).t,finding(l).curto,l.name,l.category||'',l.praca||'',l.address||'',l.phone||'',
       l.website||'SEM SITE',l.rating||'',l.reviews||0,l.pre?(l.pre.ms/1000).toFixed(2):'',
       a.perf==null?'':a.perf,a.seo==null?'':a.seo,a.a11y==null?'':a.a11y,a.bp==null?'':a.bp,
-      l.quality==null?'':l.quality,l.maps||''];});
+      l.quality==null?'':l.quality,
+      (function(){var f=faixaPreco(l);return f?f.min:'';})(),
+      (function(){var f=faixaPreco(l);return f?f.max:'';})(),
+      l.html&&l.html.ok?(temPixel(l)?'sim':'nao'):'',
+      l.html&&l.html.ok?(l.html.whatsapp?'sim':'nao'):'',
+      (l.html&&l.html.plataforma)||'',(l.html&&l.html.email)||'',
+      l.maps||''];});
   var csv=[head].concat(rows).map(function(r){return r.map(function(c){
     return '"'+String(c==null?'':c).replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
   var a=document.createElement('a');
