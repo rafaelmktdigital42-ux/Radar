@@ -337,7 +337,11 @@ h1.q{min-height:1.04em}
 .pin{width:20px;height:20px;border-radius:999px;background:var(--red);border:3px solid #fff;
   box-shadow:0 0 0 2px rgba(240,32,60,.45),0 3px 10px rgba(0,0,0,.6);cursor:grab}
 .pin:active{cursor:grabbing}
-/* Leaflet no tema escuro */
+/* Leaflet no tema escuro.
+   O filtro age só no painel de tiles: inverte pra escurecer e gira o
+   matiz de volta pra água não virar laranja. Pino, círculo e controles
+   vivem em painéis irmãos e passam intactos. */
+.leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.86) saturate(.5)}
 .leaflet-container{background:var(--bg-3);font-family:var(--body)}
 .leaflet-bar a{background:var(--bg-2);color:var(--tx-2);border-color:var(--line-2)}
 .leaflet-bar a:hover{background:var(--bg-3);color:var(--tx)}
@@ -555,6 +559,8 @@ var CHAVE_FIXA = '';
    conferir de relance se o navegador está servindo a versão nova
    ou um cache velho.
 
+   2.2  04/09/2026  troca os tiles da CARTO (passou a exigir chave) por
+                    OpenStreetMap escurecido via filtro CSS
    2.1  04/09/2026  corrige o mapa, que subiu sem folha de estilo
    2.0  04/09/2026  print do antes, follow-up, faixa de preço, nichos
                     por ticket, nível de preço do Google, inspeção do HTML
@@ -569,7 +575,7 @@ var CHAVE_FIXA = '';
    1.1  21/08/2026  duas etapas de medição, mensagem pronta
    1.0  21/08/2026  primeira versão
    ============================================================ */
-var VERSAO = '2.1';
+var VERSAO = '2.2';
 var BUILD  = '04/09/2026';
 
 /* a chave em uso: o campo tem prioridade, a embutida é o padrão */
@@ -898,8 +904,12 @@ function initMap(){
   }
   MAP=L.map('map',{zoomControl:true,attributionControl:true,scrollWheelZoom:false})
        .setView([PINPOS.lat,PINPOS.lng],11);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
-    attribution:'&copy; OpenStreetMap &copy; CARTO',subdomains:'abcd',maxZoom:19
+  /* Tiles do OpenStreetMap direto: é o único provedor que não pede
+     chave e não coloca marca d'água. Eles vêm claros, então o tema
+     escuro é feito por filtro CSS só no painel de tiles — o pino e
+     o círculo ficam em painéis separados e não são afetados. */
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'&copy; OpenStreetMap',maxZoom:19
   }).addTo(MAP);
 
   RANGE=L.circle([PINPOS.lat,PINPOS.lng],{radius:RAIO,color:'#F0203C',weight:2,
