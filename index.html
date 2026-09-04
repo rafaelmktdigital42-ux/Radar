@@ -28,7 +28,7 @@ a{color:var(--red);text-decoration:none}
 
 /* ---------- topbar ---------- */
 .top{display:flex;align-items:flex-start;justify-content:space-between;padding:22px 0 0;gap:16px}
-.brand{display:flex;flex-direction:column;gap:9px;align-items:flex-start}
+.brand{display:flex;align-items:baseline;gap:11px}
 .logomark{height:34px;width:auto;display:block}
 @media(max-width:480px){.logomark{height:27px}}
 /* subline: alternativas — PROSPECÇÃO COM PROVA · VARREDURA DE PROSPECÇÃO */
@@ -275,6 +275,26 @@ input:disabled{opacity:.5;cursor:not-allowed}
 
 body.scanning .panel,body.scanning .cta{pointer-events:none;opacity:.5}
 body.scanning .cta.stop{pointer-events:auto;opacity:1}
+
+/* selo de versão: ao lado da logo, sem moldura */
+.ver{font-family:var(--body);font-size:9.5px;letter-spacing:.1em;color:var(--tx-3);white-space:nowrap}
+.foot{text-align:center;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--tx-3);padding:0 20px 46px;margin-top:-70px}
+@media(max-width:480px){.ver{font-size:9px}}
+
+/* ---- cursor da máquina de escrever ---- */
+.cur{display:inline-block;width:.5em;height:1.02em;background:var(--red);
+  vertical-align:-.14em;margin-left:2px;animation:pisca 1s steps(1,end) infinite}
+@keyframes pisca{50%{opacity:0}}
+h1.q .cur{width:.42em;vertical-align:-.06em}
+.tape .cur{width:.5em;height:.95em;vertical-align:-.1em}
+.cta .cur{background:#fff;width:.45em}
+.msgbody .cur{width:.48em}
+@media(prefers-reduced-motion:reduce){.cur{display:none}}
+/* evita salto de layout enquanto a headline é digitada */
+h1.q{min-height:1.04em}
+.lede{min-height:3.3em}
+@media(max-width:600px){.lede{min-height:5em}}
 </style>
 </head>
 <body>
@@ -283,7 +303,7 @@ body.scanning .cta.stop{pointer-events:auto;opacity:1}
   <div class="top">
     <div class="brand">
       <svg class="logomark" viewBox="0 0 451 119" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Radar"><path d="M137.778 25.2065H172.572C175.564 25.2065 178.279 25.9468 180.715 27.4273C183.183 28.8771 185.142 30.8204 186.591 33.2572C188.072 35.694 188.812 38.4084 188.812 41.4004V47.9705C188.812 50.9625 188.087 53.6615 186.638 56.0674C185.219 58.4734 183.276 60.3858 180.808 61.8047C178.34 63.2236 175.58 63.933 172.526 63.933L192.144 91H180.253L160.635 63.933H153.093V54.2167H172.572C174.392 54.2167 175.934 53.5998 177.199 52.366C178.464 51.1013 179.096 49.5899 179.096 47.8317V41.4004C179.096 39.6113 178.464 38.0845 177.199 36.8198C175.934 35.5551 174.392 34.9228 172.572 34.9228H147.541V91H137.778V25.2065ZM220.367 25.2065H232.536L256.086 91H245.676L238.504 71.1972H220.136L223.652 61.4808H234.988L226.475 37.9765L207.227 91H196.817L220.367 25.2065Z" fill="white"/><path d="M264.461 25.2065H299.44C302.864 25.2065 305.979 26.0393 308.786 27.705C311.624 29.3706 313.876 31.6069 315.541 34.4139C317.207 37.19 318.04 40.2899 318.04 43.7138V72.6778C318.04 76.0399 317.207 79.109 315.541 81.8851C313.876 84.6612 311.624 86.8821 308.786 88.5478C305.979 90.1826 302.864 91 299.44 91H264.461V25.2065ZM299.44 81.2374C301.907 81.2374 304.005 80.3891 305.732 78.6926C307.46 76.9961 308.323 74.9449 308.323 72.5389V43.7138C308.323 41.277 307.46 39.2103 305.732 37.5138C304.005 35.7865 301.907 34.9228 299.44 34.9228H274.224V81.2374H299.44ZM348.993 25.2065H361.162L384.712 91H374.302L367.13 71.1972H348.762L352.278 61.4808H363.614L355.101 37.9765L335.853 91H325.443L348.993 25.2065ZM393.087 25.2065H427.881C430.873 25.2065 433.587 25.9468 436.024 27.4273C438.491 28.8771 440.45 30.8204 441.9 33.2572C443.381 35.694 444.121 38.4084 444.121 41.4004V47.9705C444.121 50.9625 443.396 53.6615 441.946 56.0674C440.527 58.4734 438.584 60.3858 436.116 61.8047C433.649 63.2236 430.888 63.933 427.834 63.933L447.452 91H435.561L415.943 63.933H408.402V54.2167H427.881C429.701 54.2167 431.243 53.5998 432.507 52.366C433.772 51.1013 434.404 49.5899 434.404 47.8317V41.4004C434.404 39.6113 433.772 38.0845 432.507 36.8198C431.243 35.5551 429.701 34.9228 427.881 34.9228H402.849V91H393.087V25.2065Z" fill="#BE1D34"/><g clip-path="url(#clip0_486_37)"><path d="M103.564 38.8226C92.1935 14.4378 63.2077 3.88781 38.8229 15.2587C14.438 26.6295 3.88806 55.6152 15.2589 80.0001C26.6298 104.385 55.6155 114.935 80.0004 103.564C104.385 92.1932 114.935 63.2075 103.564 38.8226Z" stroke="url(#paint0_linear_486_37)" stroke-width="11.8822" stroke-dasharray="272.09 34.01"/><path d="M86.3356 46.8576C79.4021 31.9887 61.7279 25.5558 46.8591 32.4893C31.9903 39.4227 25.5574 57.097 32.4908 71.9658C39.4243 86.8346 57.0985 93.2675 71.9673 86.3341C86.8361 79.4006 93.269 61.7264 86.3356 46.8576Z" stroke="url(#paint1_linear_486_37)" stroke-width="11.8822" stroke-dasharray="165.91 20.74"/><path d="M59.409 67.1344C63.6745 67.1344 67.1324 63.6765 67.1324 59.4109C67.1324 55.1454 63.6745 51.6875 59.409 51.6875C55.1435 51.6875 51.6855 55.1454 51.6855 59.4109C51.6855 63.6765 55.1435 67.1344 59.409 67.1344Z" fill="url(#paint2_linear_486_37)"/></g><defs><linearGradient id="paint0_linear_486_37" x1="35.8477" y1="124.153" x2="82.9756" y2="-5.33008" gradientUnits="userSpaceOnUse"><stop stop-color="#F0203C"/><stop offset="1" stop-color="#9E0B22"/></linearGradient><linearGradient id="paint1_linear_486_37" x1="45.0449" y1="98.8882" x2="73.7815" y2="19.9352" gradientUnits="userSpaceOnUse"><stop stop-color="#F0203C"/><stop offset="1" stop-color="#9E0B22"/></linearGradient><linearGradient id="paint2_linear_486_37" x1="51.6855" y1="51.6875" x2="67.1324" y2="67.1344" gradientUnits="userSpaceOnUse"><stop stop-color="#F0203C"/><stop offset="1" stop-color="#9E0B22"/></linearGradient><clipPath id="clip0_486_37"><rect width="118.822" height="118.822" fill="white"/></clipPath></defs></svg>
-      <div class="tagline"><span class="ver" id="verBadge"></span></div>
+      <span class="ver" id="verBadge"></span>
     </div>
     <button class="acct" id="btnCfg">
       <span class="avatar empty" id="avatar">＋<span class="keydot" id="keydot"></span></span>
@@ -463,6 +483,7 @@ body.scanning .cta.stop{pointer-events:auto;opacity:1}
     <div id="list"></div>
   </div>
 </div>
+<div class="foot" id="verFoot"></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -489,6 +510,8 @@ var CHAVE_FIXA = '';
    conferir de relance se o navegador está servindo a versão nova
    ou um cache velho.
 
+   1.9  04/09/2026  máquina de escrever com cursor de bloco
+   1.8  04/09/2026  corrige o selo de versão, que não pintava na abertura
    1.7  04/09/2026  mapa com pino e círculo de alcance no "perto de mim"
    1.6  04/09/2026  chave embutida opcional + selo de versão
    1.5  21/08/2026  minha lista, status, retomada, localStorage
@@ -498,7 +521,7 @@ var CHAVE_FIXA = '';
    1.1  21/08/2026  duas etapas de medição, mensagem pronta
    1.0  21/08/2026  primeira versão
    ============================================================ */
-var VERSAO = '1.7';
+var VERSAO = '1.9';
 var BUILD  = '04/09/2026';
 
 /* a chave em uso: o campo tem prioridade, a embutida é o padrão */
@@ -616,18 +639,14 @@ function logLine(t,k){var p=$('tape');p.style.display='block';
   var n=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   var d=document.createElement('div');d.className='ln'+(k?' '+k:'');
   d.innerHTML='<span class="t">'+n+'</span><span class="b">'+esc(t)+'</span>';
-  p.appendChild(d);p.scrollTop=p.scrollHeight;}
+  p.appendChild(d);p.scrollTop=p.scrollHeight;
+  digitar(d.querySelector('.b'),7,2).then(function(){p.scrollTop=p.scrollHeight;});}
 function counting(t){$('counting').textContent=t;}
-function eyebrow(n,t){$('eyebrow').innerHTML='<b>'+n+'</b> · '+t;}
+function eyebrow(n,t){var el=$('eyebrow');el.innerHTML='<b>'+n+'</b> · '+t;digitar(el,20,1);}
 function showError(t,m){$('errBox').innerHTML='<div class="err"><b>'+esc(t)+'</b>'+esc(m)+'</div>';}
 
 ['key','nicho','pNome','pFaz'].forEach(function(f){
-  $(f).addEventListener('input',function(){store.set('radar:'+f,this.value.trim());(function(){
-  $('verBadge').textContent='v'+VERSAO;
-  $('verFull').textContent='Radar v'+VERSAO+' · build '+BUILD+(CHAVE_FIXA?' · chave embutida':'');
-  console.log('Radar v'+VERSAO+' · build '+BUILD);
-})();
-paintAcct();});});
+  $(f).addEventListener('input',function(){store.set('radar:'+f,this.value.trim());paintAcct();});});
 function paintAcct(){
   var n=$('pNome').value.trim(), f=$('pFaz').value.trim(), k=getKey();
   var av=$('avatar');
@@ -639,6 +658,15 @@ function paintAcct(){
   $('keydot').classList.toggle('ok',!!k);
   $('keydot').title=k?'Chave configurada':'Falta a chave do Google';
 }
+function paintVersao(){
+  var t='Radar v'+VERSAO+' · build '+BUILD+(CHAVE_FIXA?' · chave embutida':'');
+  var a=$('verBadge'), b=$('verFull'), c=$('verFoot');
+  if(a)a.textContent='v'+VERSAO;
+  if(b)b.textContent=t;
+  if(c)c.textContent=t;
+  console.log(t);
+}
+
 $('btnCfg').addEventListener('click',function(){
   var c=$('cfg');c.classList.toggle('on');this.classList.toggle('on',c.classList.contains('on'));
   if(c.classList.contains('on'))$('pNome').focus();});
@@ -806,6 +834,10 @@ async function runDeep(i){
   clearInterval(tick);
   l.deepRunning=false;l.deep=true;computeScore(l);
   logLine(l.name+' · '+finding(l).curto,l.audit.failed?'bad':'done');
+  setTimeout(function(){
+    var f=document.querySelectorAll('.finding .txt, .probe .txt');
+    if(f.length)digitar(f[f.length-1],14,1);
+  },80);
   if(l.id&&SAVED[l.id]){var k=snapshot(l);k.status=SAVED[l.id].status;k.nota=SAVED[l.id].nota;
     k.savedAt=SAVED[l.id].savedAt;k.updatedAt=Date.now();SAVED[l.id]=k;persistSaved();}
   render();saveScan();
@@ -911,6 +943,67 @@ function tagsOf(l){
   if(l.praca)t.push({t:l.praca,c:''});
   if(l.phone)t.push({t:'Tem telefone',c:''});
   return t;
+}
+
+/* ============================================================
+   MÁQUINA DE ESCREVER
+
+   Revela o texto caractere por caractere com um cursor de bloco.
+   Preserva as tags de dentro (o <em> vermelho da headline, o <b>
+   do log), porque monta um clone parcial em vez de mexer em
+   string de HTML.
+
+   Guarda o que já digitou em data-typed: se o texto não mudou,
+   não digita de novo. Sem isso, cada render redigitaria tudo.
+   ============================================================ */
+var REDUCE=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+function nodeLen(n){
+  if(n.nodeType===3)return n.nodeValue.length;
+  var t=0;for(var i=0;i<n.childNodes.length;i++)t+=nodeLen(n.childNodes[i]);
+  return t;
+}
+function parcial(src,orc,alvo){
+  for(var i=0;i<src.childNodes.length&&orc.n>0;i++){
+    var c=src.childNodes[i];
+    if(c.nodeType===3){
+      var pega=Math.min(orc.n,c.nodeValue.length);
+      alvo.appendChild(document.createTextNode(c.nodeValue.slice(0,pega)));
+      orc.n-=pega;
+    } else if(c.nodeType===1){
+      var e=c.cloneNode(false);alvo.appendChild(e);parcial(c,orc,e);
+    }
+  }
+}
+function digitar(el,vel,passo,pausa){
+  return new Promise(function(pronto){
+    if(!el){pronto();return;}
+    if(el.__digitando){pronto();return;}
+    var html=el.innerHTML;
+    if(REDUCE||el.getAttribute('data-typed')===html){pronto();return;}
+    el.setAttribute('data-typed',html);
+    var molde=document.createElement('div');molde.innerHTML=html;
+    var total=nodeLen(molde);
+    if(!total){pronto();return;}
+    el.__digitando=true;
+    var n=0;
+    (function passa(){
+      n=Math.min(total,n+(passo||1));
+      el.innerHTML='';
+      parcial(molde,{n:n},el);
+      var cur=document.createElement('span');cur.className='cur';el.appendChild(cur);
+      if(n<total)setTimeout(passa,vel);
+      else setTimeout(function(){
+        el.innerHTML=html;el.__digitando=false;pronto();
+      },pausa==null?200:pausa);
+    })();
+  });
+}
+async function abertura(){
+  await digitar($('eyebrow'),20,1,120);
+  await digitar(document.querySelector('h1.q'),24,1,180);
+  await digitar(document.querySelector('.lede'),6,3,120);
+  await digitar($('run'),22,1,600);
 }
 
 /* ---------- contador subindo ---------- */
@@ -1021,7 +1114,10 @@ $('chips').addEventListener('click',function(e){var c=e.target.closest('.chip');
 $('list').addEventListener('click',function(e){
   var d=e.target.closest('.act-deep');if(d)return runDeep(+d.dataset.i);
   var m=e.target.closest('.act-msg');
-  if(m){var l=LEADS[+m.dataset.i];l.msgOpen=!l.msgOpen;render();return;}
+  if(m){var l=LEADS[+m.dataset.i];l.msgOpen=!l.msgOpen;render();
+    if(l.msgOpen){var box=document.querySelector('[data-msg="'+m.dataset.i+'"] .msgbody');
+      digitar(box,3,4);}
+    return;}
   var v=e.target.closest('.act-ver');
   if(v){var L=LEADS[+v.dataset.i];L.ver=(L.ver||0)+1;render();toast('Versão '+((L.ver%2)+1));return;}
   var sb=e.target.closest('.act-save');
@@ -1100,12 +1196,16 @@ $('savedList').addEventListener('click',function(e){
 function setView(v){
   VIEW=v;document.body.classList.toggle('view-saved',v==='saved');
   $('tabScan').classList.toggle('on',v==='scan');$('tabSaved').classList.toggle('on',v==='saved');
-  if(v==='saved')renderSaved();
+  if(v==='saved'){renderSaved();
+    digitar(document.querySelector('.savedhead h2'),22,1)
+      .then(function(){digitar($('savedSub'),9,2);});}
   window.scrollTo({top:0,behavior:'smooth'});
 }
 $('tabScan').addEventListener('click',function(){setView('scan');});
 $('tabSaved').addEventListener('click',function(){setView('saved');});
 updateTabCount();
+paintVersao();
+abertura();
 
 $('savedCsv').addEventListener('click',function(){
   var all=savedArr();if(!all.length)return toast('Lista vazia');
@@ -1231,6 +1331,7 @@ async function run(){
     var onde=SCOPE==='brasil'?'no Brasil':SCOPE==='perto'?'na sua região':'em '+cid;
     $('rTitle').textContent=nicho.charAt(0).toUpperCase()+nicho.slice(1)+' '+onde;
     $('rSub').textContent=LEADS.length+' negócios · '+LEADS.filter(function(l){return !l.website;}).length+' sem site';
+    digitar($('rTitle'),22,1).then(function(){digitar($('rSub'),9,2);});
     eyebrow('03','RESULTADO');counting(LEADS.length+' negócios encontrados');
     document.body.classList.add('done');
     markHist(LEADS.map(function(l){return l.id;}).filter(Boolean));
