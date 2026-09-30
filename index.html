@@ -88,11 +88,24 @@ h1.q em{font-style:normal;color:var(--red)}
 body.done h1.q,body.done .lede{display:none}
 
 /* ---------- painel de busca ---------- */
-.panel{border:1px solid var(--line);background:var(--bg-2);border-radius:26px;padding:30px;text-align:left;
-  display:grid;grid-template-columns:1fr 1fr;gap:0 30px;align-items:start}
-@media(max-width:820px){.panel{grid-template-columns:1fr;gap:0;padding:24px}}
-/* blocos que ocupam a linha inteira */
-.panel #fRaio,.panel #fBrasil,.panel .three,.panel .chk,.panel .cta,.panel .note{grid-column:1/-1}
+.panel{border:1px solid var(--line);background:var(--bg-2);border-radius:26px;padding:12px;text-align:left}
+@media(max-width:820px){.panel{padding:10px}}
+
+/* cada etapa num bloco próprio, separada da seguinte */
+.grupo{border:1px solid var(--line);background:var(--bg);border-radius:18px;
+  padding:20px 22px;margin-bottom:10px}
+@media(max-width:700px){.grupo{padding:16px}}
+.gh{display:flex;align-items:center;gap:9px;font-family:var(--disp);font-size:9.5px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--tx-3);
+  padding-bottom:13px;margin-bottom:17px;border-bottom:1px solid var(--line)}
+.gh b{font-weight:400;color:var(--red);font-size:11px;letter-spacing:.06em}
+.gc{display:grid;grid-template-columns:1fr 1fr;gap:18px 26px;align-items:start}
+.gc.three{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.gc,.gc.three{grid-template-columns:1fr}}
+.gc .field{margin-bottom:0}
+.gc .field.wide{grid-column:1/-1}
+.grupo .note{margin-top:14px}
+.grupo .chk{margin-top:16px}
 .lab{display:block;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--tx-3);margin-bottom:8px}
 .field{margin-bottom:18px}
 .field:last-child{margin-bottom:0}
@@ -256,8 +269,11 @@ body.scanning .blip{animation:blink 2.6s ease-in-out infinite}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
 /* ---- abas ---- */
-.tabs{display:flex;gap:8px;margin-top:18px;justify-content:center}
-.tab{background:var(--bg-2);border:1px solid var(--line-2);border-radius:999px;padding:9px 17px;cursor:pointer;
+.tabs{display:flex;gap:7px;justify-content:center;flex:1;min-width:0;
+  overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+@media(max-width:820px){.tabs{justify-content:flex-start}}
+.tab{background:transparent;border:1px solid var(--line-2);border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap;
   font-family:var(--disp);font-weight:400;font-size:10px;letter-spacing:.13em;text-transform:uppercase;
   color:var(--tx-2);transition:.14s}
 .tab:hover{border-color:var(--tx-2);color:var(--tx)}
@@ -458,6 +474,11 @@ body.view-guia .hero,body.view-guia .results,body.view-guia #savedView{display:n
     <a class="brand" id="brandHome" href="#" title="Início · nova frase">
       <svg class="logomark" viewBox="0 0 451 119" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Radar"><path d="M137.778 25.2065H172.572C175.564 25.2065 178.279 25.9468 180.715 27.4273C183.183 28.8771 185.142 30.8204 186.591 33.2572C188.072 35.694 188.812 38.4084 188.812 41.4004V47.9705C188.812 50.9625 188.087 53.6615 186.638 56.0674C185.219 58.4734 183.276 60.3858 180.808 61.8047C178.34 63.2236 175.58 63.933 172.526 63.933L192.144 91H180.253L160.635 63.933H153.093V54.2167H172.572C174.392 54.2167 175.934 53.5998 177.199 52.366C178.464 51.1013 179.096 49.5899 179.096 47.8317V41.4004C179.096 39.6113 178.464 38.0845 177.199 36.8198C175.934 35.5551 174.392 34.9228 172.572 34.9228H147.541V91H137.778V25.2065ZM220.367 25.2065H232.536L256.086 91H245.676L238.504 71.1972H220.136L223.652 61.4808H234.988L226.475 37.9765L207.227 91H196.817L220.367 25.2065Z" fill="white"/><path d="M264.461 25.2065H299.44C302.864 25.2065 305.979 26.0393 308.786 27.705C311.624 29.3706 313.876 31.6069 315.541 34.4139C317.207 37.19 318.04 40.2899 318.04 43.7138V72.6778C318.04 76.0399 317.207 79.109 315.541 81.8851C313.876 84.6612 311.624 86.8821 308.786 88.5478C305.979 90.1826 302.864 91 299.44 91H264.461V25.2065ZM299.44 81.2374C301.907 81.2374 304.005 80.3891 305.732 78.6926C307.46 76.9961 308.323 74.9449 308.323 72.5389V43.7138C308.323 41.277 307.46 39.2103 305.732 37.5138C304.005 35.7865 301.907 34.9228 299.44 34.9228H274.224V81.2374H299.44ZM348.993 25.2065H361.162L384.712 91H374.302L367.13 71.1972H348.762L352.278 61.4808H363.614L355.101 37.9765L335.853 91H325.443L348.993 25.2065ZM393.087 25.2065H427.881C430.873 25.2065 433.587 25.9468 436.024 27.4273C438.491 28.8771 440.45 30.8204 441.9 33.2572C443.381 35.694 444.121 38.4084 444.121 41.4004V47.9705C444.121 50.9625 443.396 53.6615 441.946 56.0674C440.527 58.4734 438.584 60.3858 436.116 61.8047C433.649 63.2236 430.888 63.933 427.834 63.933L447.452 91H435.561L415.943 63.933H408.402V54.2167H427.881C429.701 54.2167 431.243 53.5998 432.507 52.366C433.772 51.1013 434.404 49.5899 434.404 47.8317V41.4004C434.404 39.6113 433.772 38.0845 432.507 36.8198C431.243 35.5551 429.701 34.9228 427.881 34.9228H402.849V91H393.087V25.2065Z" fill="#BE1D34"/><g clip-path="url(#clip0_486_37)"><path d="M103.564 38.8226C92.1935 14.4378 63.2077 3.88781 38.8229 15.2587C14.438 26.6295 3.88806 55.6152 15.2589 80.0001C26.6298 104.385 55.6155 114.935 80.0004 103.564C104.385 92.1932 114.935 63.2075 103.564 38.8226Z" stroke="url(#paint0_linear_486_37)" stroke-width="11.8822" stroke-dasharray="272.09 34.01"/><path d="M86.3356 46.8576C79.4021 31.9887 61.7279 25.5558 46.8591 32.4893C31.9903 39.4227 25.5574 57.097 32.4908 71.9658C39.4243 86.8346 57.0985 93.2675 71.9673 86.3341C86.8361 79.4006 93.269 61.7264 86.3356 46.8576Z" stroke="url(#paint1_linear_486_37)" stroke-width="11.8822" stroke-dasharray="165.91 20.74"/><path d="M59.409 67.1344C63.6745 67.1344 67.1324 63.6765 67.1324 59.4109C67.1324 55.1454 63.6745 51.6875 59.409 51.6875C55.1435 51.6875 51.6855 55.1454 51.6855 59.4109C51.6855 63.6765 55.1435 67.1344 59.409 67.1344Z" fill="url(#paint2_linear_486_37)"/></g><defs><linearGradient id="paint0_linear_486_37" x1="35.8477" y1="124.153" x2="82.9756" y2="-5.33008" gradientUnits="userSpaceOnUse"><stop stop-color="#F0203C"/><stop offset="1" stop-color="#9E0B22"/></linearGradient><linearGradient id="paint1_linear_486_37" x1="45.0449" y1="98.8882" x2="73.7815" y2="19.9352" gradientUnits="userSpaceOnUse"><stop stop-color="#F0203C"/><stop offset="1" stop-color="#9E0B22"/></linearGradient><linearGradient id="paint2_linear_486_37" x1="51.6855" y1="51.6875" x2="67.1324" y2="67.1344" gradientUnits="userSpaceOnUse"><stop stop-color="#F0203C"/><stop offset="1" stop-color="#9E0B22"/></linearGradient><clipPath id="clip0_486_37"><rect width="118.822" height="118.822" fill="white"/></clipPath></defs></svg>
     </a>
+    <div class="tabs">
+    <button class="tab on" id="tabScan">Varredura</button>
+    <button class="tab" id="tabSaved">Minha lista <i id="tabCount">0</i><span class="due-badge" id="tabDue" style="display:none"></span></button>
+    <button class="tab" id="tabGuia">Como conseguir a chave</button>
+  </div>
     <button class="acct" id="btnCfg">
       <span class="avatar empty" id="avatar">＋<span class="keydot" id="keydot"></span></span>
       <span class="who2"><span class="n1" id="acctName">Criar perfil</span>
@@ -478,12 +499,6 @@ body.view-guia .hero,body.view-guia .results,body.view-guia #savedView{display:n
       <p class="note">Precisa das APIs Places (New) e PageSpeed Insights habilitadas. Fica salva só no seu navegador.</p>
       <p class="note" id="verFull" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);color:var(--tx-3)"></p>
     </div>
-  </div>
-
-  <div class="tabs">
-    <button class="tab on" id="tabScan">Varredura</button>
-    <button class="tab" id="tabSaved">Minha lista <i id="tabCount">0</i><span class="due-badge" id="tabDue" style="display:none"></span></button>
-    <button class="tab" id="tabGuia">Como conseguir a chave</button>
   </div>
 
   <div id="savedView">
@@ -545,69 +560,81 @@ body.view-guia .hero,body.view-guia .results,body.view-guia #savedView{display:n
     <p class="lede">Acha quem já tem movimento e não tem página, ou tem uma que está trabalhando contra. Mede o que está errado e escreve a mensagem que você manda.</p>
 
     <div class="panel">
-      <div class="field">
-        <span class="lab">Onde buscar</span>
-        <div class="seg" id="scope">
-          <button data-v="cidade" class="on">Uma cidade</button>
-          <button data-v="perto">Perto de mim</button>
-          <button data-v="brasil">Brasil todo</button>
-        </div>
-      </div>
 
-      <div class="field" id="fCidade">
-        <span class="lab">Cidade</span>
-        <select id="cidade"></select>
-      </div>
+      <section class="grupo">
+        <div class="gh"><b>01</b> Onde buscar</div>
+        <div class="gc">
+          <div class="field">
+            <span class="lab">Região</span>
+            <div class="seg" id="scope">
+              <button data-v="cidade" class="on">Uma cidade</button>
+              <button data-v="perto">Perto de mim</button>
+              <button data-v="brasil">Brasil todo</button>
+            </div>
+          </div>
 
-      <div class="field" id="fRaio" style="display:none">
-        <span class="lab">Raio da busca</span>
-        <div class="seg" id="raio">
-          <button data-v="5000">5 km</button><button data-v="10000" class="on">10 km</button>
-          <button data-v="20000">20 km</button><button data-v="50000">50 km</button>
-        </div>
-        <div class="mapwrap">
-          <div id="map"></div>
-          <div class="maphud">
-            <span class="mh-txt" id="mapInfo">Arraste o pino ou toque no mapa</span>
-            <button class="mh-btn" id="btnGeo" type="button">Minha localização</button>
+          <div class="field" id="fCidade">
+            <span class="lab">Cidade</span>
+            <select id="cidade"></select>
+          </div>
+
+          <div class="field wide" id="fRaio" style="display:none">
+            <span class="lab">Raio da busca</span>
+            <div class="seg" id="raio">
+              <button data-v="5000">5 km</button><button data-v="10000" class="on">10 km</button>
+              <button data-v="20000">20 km</button><button data-v="50000">50 km</button>
+            </div>
+            <div class="mapwrap">
+              <div id="map"></div>
+              <div class="maphud">
+                <span class="mh-txt" id="mapInfo">Arraste o pino ou toque no mapa</span>
+                <button class="mh-btn" id="btnGeo" type="button">Minha localização</button>
+              </div>
+            </div>
+            <p class="note">O pino é o centro da busca. O círculo mostra o raio.</p>
+          </div>
+
+          <div class="field wide" id="fBrasil" style="display:none">
+            <p class="note" style="margin-top:0">Roda a mesma busca nas 10 maiores capitais e junta tudo numa lista só, sem repetir. Serve pra quem atende o país inteiro e não depende de estar perto do cliente.</p>
           </div>
         </div>
-        <p class="note">O pino é o centro da busca. O círculo mostra o raio.</p>
-      </div>
+      </section>
 
-      <div class="field" id="fBrasil" style="display:none">
-        <p class="note" style="margin-top:0">Roda a mesma busca nas 10 maiores capitais e junta tudo numa lista só, sem repetir. Serve pra quem atende o país inteiro e não depende de estar perto do cliente.</p>
-      </div>
-
-      <div class="field">
-        <span class="lab">O que trazer</span>
-        <div class="seg" id="trazer">
-          <button data-v="todos" class="on">Todos os negócios</button>
-          <button data-v="semsite">Só quem não tem site</button>
+      <section class="grupo">
+        <div class="gh"><b>02</b> O que procurar</div>
+        <div class="gc">
+          <div class="field">
+            <span class="lab">Nicho <span class="hintlab">agrupado por quanto paga</span></span>
+            <select id="nichoSel"></select>
+            <input type="text" id="nicho" placeholder="digite o nicho" style="display:none;margin-top:9px">
+          </div>
+          <div class="field">
+            <span class="lab">O que trazer</span>
+            <div class="seg" id="trazer">
+              <button data-v="todos" class="on">Todos os negócios</button>
+              <button data-v="semsite">Só quem não tem site</button>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div class="field">
-        <span class="lab">Nicho <span class="hintlab">agrupado por quanto paga</span></span>
-        <select id="nichoSel"></select>
-        <input type="text" id="nicho" placeholder="digite o nicho" style="display:none;margin-top:9px">
-      </div>
-
-      <div class="three">
-        <div class="field" style="margin-bottom:0"><span class="lab">Quantos negócios</span>
-          <select id="qtd"><option value="20">20 negócios</option><option value="40" selected>40 negócios</option><option value="60">60 negócios</option></select></div>
-        <div class="field" style="margin-bottom:0"><span class="lab">Movimento mínimo</span>
-          <select id="minRev"><option value="0">Tanto faz</option><option value="5" selected>5+ avaliações</option>
-            <option value="20">20+ avaliações</option><option value="50">50+ avaliações</option>
-            <option value="100">100+ avaliações</option><option value="300">300+ avaliações</option></select></div>
-        <div class="field" style="margin-bottom:0"><span class="lab">Nota mínima</span>
-          <select id="minRating"><option value="0" selected>Tanto faz</option><option value="3.5">3,5 ★ ou mais</option>
-            <option value="4">4,0 ★ ou mais</option><option value="4.5">4,5 ★ ou mais</option></select></div>
-      </div>
-      <p class="note" id="filtroNota">Movimento é quantas pessoas avaliaram — é o sinal de que o negócio fatura. Nota é a média de estrelas.</p>
-
-      <label class="chk"><input type="checkbox" id="doHtml" checked>
-        <span>Na análise profunda, ler o código do site: pixel de anúncio, WhatsApp, e-mail e plataforma. Passa por proxy público e às vezes falha.</span></label>
+      <section class="grupo">
+        <div class="gh"><b>03</b> Filtros</div>
+        <div class="gc three">
+          <div class="field"><span class="lab">Quantos negócios</span>
+            <select id="qtd"><option value="20">20 negócios</option><option value="40" selected>40 negócios</option><option value="60">60 negócios</option></select></div>
+          <div class="field"><span class="lab">Movimento mínimo</span>
+            <select id="minRev"><option value="0">Tanto faz</option><option value="5" selected>5+ avaliações</option>
+              <option value="20">20+ avaliações</option><option value="50">50+ avaliações</option>
+              <option value="100">100+ avaliações</option><option value="300">300+ avaliações</option></select></div>
+          <div class="field"><span class="lab">Nota mínima</span>
+            <select id="minRating"><option value="0" selected>Tanto faz</option><option value="3.5">3,5 ★ ou mais</option>
+              <option value="4">4,0 ★ ou mais</option><option value="4.5">4,5 ★ ou mais</option></select></div>
+        </div>
+        <p class="note" id="filtroNota">Movimento é quantas pessoas avaliaram — é o sinal de que o negócio fatura. Nota é a média de estrelas.</p>
+        <label class="chk"><input type="checkbox" id="doHtml" checked>
+          <span>Na análise profunda, ler o código do site: pixel de anúncio, WhatsApp, e-mail e plataforma. Passa por proxy público e às vezes falha.</span></label>
+      </section>
 
       <button class="cta" id="run">Varrer a cidade</button>
     </div>
@@ -693,6 +720,8 @@ var CHAVE_FIXA = '';
    conferir de relance se o navegador está servindo a versão nova
    ou um cache velho.
 
+   3.2  30/09/2026  abas na tarja de topo; painel dividido em três blocos
+                    numerados em vez de campos soltos em duas colunas
    3.1  30/09/2026  todas as seções na largura da lista; painel de busca
                     em duas colunas pra não virar faixa esticada
    3.0  30/09/2026  corrige a tarja sumida (colisão da classe .bar com a
@@ -729,7 +758,7 @@ var CHAVE_FIXA = '';
    1.1  21/08/2026  duas etapas de medição, mensagem pronta
    1.0  21/08/2026  primeira versão
    ============================================================ */
-var VERSAO = '3.1';
+var VERSAO = '3.2';
 var BUILD  = '30/09/2026';
 
 /* a chave em uso: o campo tem prioridade, a embutida é o padrão */
