@@ -360,6 +360,65 @@ h1.q{min-height:1.04em}
   border-radius:999px;padding:8px 14px;font-family:var(--body);font-size:11.5px;color:var(--tx)}
 .sitein:focus{outline:none;border-color:var(--amber)}
 .sitein::placeholder{color:var(--tx-3)}
+
+/* ---- aba do guia ---- */
+body:not(.view-guia) #guiaView{display:none}
+body.view-guia .hero,body.view-guia .results,body.view-guia #savedView{display:none}
+.guia-intro{border:1px solid var(--line);background:var(--bg-2);border-radius:20px;padding:20px 22px;
+  font-size:13px;line-height:1.65;color:var(--tx-2);margin-bottom:18px;text-align:center}
+.guia-intro b{color:var(--tx)}
+
+/* verificador */
+.tester{border:1px solid rgba(240,32,60,.4);background:var(--red-soft);border-radius:20px;
+  padding:20px 22px;margin-bottom:30px}
+.tester .th{margin-bottom:14px}
+.tester .tl{display:block;font-family:var(--disp);font-size:13px;letter-spacing:.06em;color:var(--tx)}
+.tester .ts{display:block;font-size:11.5px;color:var(--tx-2);margin-top:4px}
+.tester .trow{display:flex;gap:9px;flex-wrap:wrap}
+.tester input{flex:1;min-width:190px;background:var(--bg-3);border:1px solid var(--line-2);
+  border-radius:999px;padding:11px 16px;font-family:var(--body);font-size:13px;color:var(--tx)}
+.tester input:focus{outline:none;border-color:var(--red)}
+.tres{margin-top:15px;display:flex;flex-direction:column;gap:9px}
+.tr-ok,.tr-erro,.tr-aviso{border-radius:14px;padding:13px 16px;font-size:12.5px;line-height:1.55}
+.tr-ok{border:1px solid rgba(56,193,114,.5);background:rgba(56,193,114,.09)}
+.tr-erro{border:1px solid rgba(240,32,60,.5);background:rgba(240,32,60,.09)}
+.tr-aviso{border:1px solid rgba(255,176,32,.5);background:rgba(255,176,32,.09)}
+.tr-ok b{color:var(--green)}.tr-erro b{color:var(--red)}.tr-aviso b{color:var(--amber)}
+.tr-ok b,.tr-erro b,.tr-aviso b{display:block;font-family:var(--disp);font-weight:400;font-size:13px;margin-bottom:3px}
+.tr-ok span,.tr-erro span,.tr-aviso span{color:var(--tx-2)}
+.ti{display:flex;gap:11px;align-items:flex-start;padding:11px 14px;border:1px solid var(--line);
+  border-radius:12px;background:var(--bg-2);font-size:12px;line-height:1.5}
+.ti b{display:block;color:var(--tx);font-weight:500}
+.ti span:not(.tic){display:block;color:var(--tx-3);margin-top:3px;font-size:11.5px}
+.tic{flex-shrink:0;width:19px;height:19px;border-radius:999px;display:flex;align-items:center;
+  justify-content:center;font-size:10px;background:var(--line-2);color:var(--tx-2)}
+.ti-ok .tic{background:var(--green);color:#fff}
+.ti-erro .tic{background:var(--red);color:#fff}
+.ti-aviso .tic{background:var(--amber);color:#111}
+
+/* passos */
+.step{display:grid;grid-template-columns:44px 1fr;gap:16px;border:1px solid var(--line);
+  background:var(--bg-2);border-radius:20px;padding:20px 22px;margin-bottom:11px}
+@media(max-width:600px){.step{grid-template-columns:32px 1fr;gap:12px;padding:16px}}
+.sn{font-family:var(--disp);font-size:26px;line-height:1;color:var(--red);letter-spacing:-.02em}
+.sb h3{font-family:var(--disp);font-weight:400;font-size:16.5px;letter-spacing:-.008em;margin-bottom:8px}
+.sb p{font-size:12.8px;line-height:1.68;color:var(--tx-2)}
+.sb p b{color:var(--tx);font-weight:600}
+.sb a{color:var(--red);text-decoration:underline}
+.sp{width:100%;border:1px solid var(--line);border-radius:12px;margin-top:14px;display:block}
+.sp-vazio{margin-top:14px;border:1px dashed var(--line-2);border-radius:12px;padding:26px 18px;
+  text-align:center;font-size:10.5px;letter-spacing:.06em;color:var(--tx-3);line-height:1.5}
+.sd{margin-top:12px;border-left:2px solid var(--amber);padding:2px 0 2px 12px;
+  font-size:11.5px;line-height:1.55;color:var(--tx-3)}
+
+/* dúvidas */
+.faqh{font-family:var(--disp);font-weight:400;font-size:20px;letter-spacing:-.01em;margin:30px 0 14px;text-align:center}
+.fq{border:1px solid var(--line);background:var(--bg-2);border-radius:14px;margin-bottom:8px;overflow:hidden}
+.fq summary{padding:14px 18px;cursor:pointer;font-size:12.8px;color:var(--tx);list-style:none}
+.fq summary::-webkit-details-marker{display:none}
+.fq summary::after{content:'+';float:right;color:var(--red);font-family:var(--disp)}
+.fq[open] summary::after{content:'−'}
+.fq p{padding:0 18px 16px;font-size:12.2px;line-height:1.65;color:var(--tx-2)}
 </style>
 </head>
 <body>
@@ -392,6 +451,7 @@ h1.q{min-height:1.04em}
   <div class="tabs">
     <button class="tab on" id="tabScan">Varredura</button>
     <button class="tab" id="tabSaved">Minha lista <i id="tabCount">0</i><span class="due-badge" id="tabDue" style="display:none"></span></button>
+    <button class="tab" id="tabGuia">Como conseguir a chave</button>
   </div>
 
   <div id="savedView">
@@ -416,6 +476,35 @@ h1.q{min-height:1.04em}
       <button class="act" id="savedClear">Esvaziar lista</button>
     </div>
     <div id="savedList"></div>
+  </div>
+
+  <div id="guiaView">
+    <div class="savedhead">
+      <h2>Como conseguir a chave</h2>
+      <p>configuração única · você só faz isso uma vez</p>
+    </div>
+
+    <div class="guia-intro">
+      O Radar usa duas ferramentas gratuitas do Google pra achar os negócios e medir os sites.
+      Pra isso funcionar, você precisa de uma chave própria — é ela que liga o app à sua conta.
+      <b>É de graça</b> dentro do limite de uso normal, e a configuração é feita uma vez só.
+    </div>
+
+    <div class="tester" id="tester">
+      <div class="th">
+        <span class="tl">Verificador</span>
+        <span class="ts">Já tem a chave? Cole aqui e descubra se está tudo certo</span>
+      </div>
+      <div class="trow">
+        <input type="password" id="testKey" placeholder="AIza…" autocomplete="off">
+        <button class="act prime" id="btnTest">Testar chave</button>
+      </div>
+      <div id="testOut"></div>
+    </div>
+
+    <div id="guiaSteps"></div>
+
+    <div class="guia-faq" id="guiaFaq"></div>
   </div>
 
   <div class="hero">
@@ -572,6 +661,11 @@ var CHAVE_FIXA = '';
    conferir de relance se o navegador está servindo a versão nova
    ou um cache velho.
 
+   2.5  30/09/2026  aba "como conseguir a chave" com guia de 7 passos e
+                    verificador que traduz o erro do Google pro passo certo
+   2.4  26/09/2026  digitação mais lenta e calibrável; corrige lead travado
+                    em "analisando", estouro do localStorage pelo print e
+                    pré-checagem sem tempo limite
    2.3  04/09/2026  "sem site no Google" != "sem site": atalho de checagem
                     no Instagram e campo pra colar o site achado na mão
    2.2  04/09/2026  troca os tiles da CARTO (passou a exigir chave) por
@@ -590,8 +684,8 @@ var CHAVE_FIXA = '';
    1.1  21/08/2026  duas etapas de medição, mensagem pronta
    1.0  21/08/2026  primeira versão
    ============================================================ */
-var VERSAO = '2.3';
-var BUILD  = '04/09/2026';
+var VERSAO = '2.5';
+var BUILD  = '30/09/2026';
 
 /* a chave em uso: o campo tem prioridade, a embutida é o padrão */
 function getKey(){
@@ -833,9 +927,9 @@ function logLine(t,k){var p=$('tape');p.style.display='block';
   var d=document.createElement('div');d.className='ln'+(k?' '+k:'');
   d.innerHTML='<span class="t">'+n+'</span><span class="b">'+esc(t)+'</span>';
   p.appendChild(d);p.scrollTop=p.scrollHeight;
-  digitar(d.querySelector('.b'),7,2).then(function(){p.scrollTop=p.scrollHeight;});}
+  digitar(d.querySelector('.b'),18,1).then(function(){p.scrollTop=p.scrollHeight;});}
 function counting(t){$('counting').textContent=t;}
-function eyebrow(n,t){var el=$('eyebrow');el.innerHTML='<b>'+n+'</b> · '+t;digitar(el,20,1);}
+function eyebrow(n,t){var el=$('eyebrow');el.innerHTML='<b>'+n+'</b> · '+t;digitar(el,34,1);}
 function showError(t,m){$('errBox').innerHTML='<div class="err"><b>'+esc(t)+'</b>'+esc(m)+'</div>';}
 
 ['key','nicho','pNome','pFaz'].forEach(function(f){
@@ -994,7 +1088,13 @@ async function searchOnce(key,query,bias,wanted){
 /* ---------- etapa 1: batida na porta ---------- */
 async function precheck(url){
   var t0=performance.now();
-  try{ await fetch(url,{mode:'no-cors',cache:'no-store'});
+  try{
+    /* sem teto, um domínio morto segura um dos 6 trabalhadores
+       até o navegador desistir sozinho — o que demora muito */
+    var ctrl=new AbortController();
+    var t=setTimeout(function(){ctrl.abort();},8000);
+    await fetch(url,{mode:'no-cors',cache:'no-store',signal:ctrl.signal});
+    clearTimeout(t);
     return {ms:performance.now()-t0,alive:true};
   }catch(e){ return {ms:performance.now()-t0,alive:false}; }
 }
@@ -1126,7 +1226,8 @@ async function runDeep(i){
   if(!key){showError('Falta a chave','Abra "Perfil e chave" e cole a sua Google API key.');
     $('cfg').classList.add('on');$('btnCfg').classList.add('on');$('key').focus();return;}
   l.deepRunning=true;render();
-  var bar=document.querySelector('[data-bar="'+i+'"]');if(!bar)return;
+  var bar=document.querySelector('[data-bar="'+i+'"]');
+  if(!bar){l.deepRunning=false;render();return;}
   bar.classList.add('on');
   var fill=bar.querySelector('i'),lab=bar.querySelector('.f-lab'),pct=bar.querySelector('.f-pct'),f=0;
   fill.style.width='6%';lab.textContent=FASES[0].t;pct.textContent='6%';
@@ -1142,7 +1243,7 @@ async function runDeep(i){
   logLine(l.name+' · '+finding(l).curto,l.audit.failed?'bad':'done');
   setTimeout(function(){
     var f=document.querySelectorAll('.finding .txt, .probe .txt');
-    if(f.length)digitar(f[f.length-1],14,1);
+    if(f.length)digitar(f[f.length-1],26,1);
   },80);
   if(l.id&&SAVED[l.id]){var k=snapshot(l);k.status=SAVED[l.id].status;k.nota=SAVED[l.id].nota;
     k.savedAt=SAVED[l.id].savedAt;k.updatedAt=Date.now();SAVED[l.id]=k;persistSaved();}
@@ -1278,6 +1379,15 @@ function tagsOf(l){
    ============================================================ */
 var REDUCE=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
+/* ============================================================
+   VELOCIDADE DA DIGITAÇÃO
+
+   Multiplica o tempo por caractere. 1 = padrão.
+   2 = metade da velocidade.  0.5 = o dobro.
+   Mexa só aqui pra calibrar o efeito inteiro de uma vez.
+   ============================================================ */
+var VEL_TEXTO = 1;
+
 function nodeLen(n){
   if(n.nodeType===3)return n.nodeValue.length;
   var t=0;for(var i=0;i<n.childNodes.length;i++)t+=nodeLen(n.childNodes[i]);
@@ -1312,7 +1422,7 @@ function digitar(el,vel,passo,pausa){
       el.innerHTML='';
       parcial(molde,{n:n},el);
       var cur=document.createElement('span');cur.className='cur';el.appendChild(cur);
-      if(n<total)setTimeout(passa,vel);
+      if(n<total)setTimeout(passa,Math.max(vel*VEL_TEXTO,12));
       else setTimeout(function(){
         el.innerHTML=html;el.__digitando=false;pronto();
       },pausa==null?200:pausa);
@@ -1320,10 +1430,10 @@ function digitar(el,vel,passo,pausa){
   });
 }
 async function abertura(){
-  await digitar($('eyebrow'),20,1,120);
-  await digitar(document.querySelector('h1.q'),24,1,180);
-  await digitar(document.querySelector('.lede'),6,3,120);
-  await digitar($('run'),22,1,600);
+  await digitar($('eyebrow'),34,1,200);
+  await digitar(document.querySelector('h1.q'),48,1,320);
+  await digitar(document.querySelector('.lede'),10,1,180);
+  await digitar($('run'),40,1,300);
 }
 
 /* ---------- contador subindo ---------- */
@@ -1465,7 +1575,7 @@ $('list').addEventListener('click',function(e){
   var m=e.target.closest('.act-msg');
   if(m){var l=LEADS[+m.dataset.i];l.msgOpen=!l.msgOpen;render();
     if(l.msgOpen){var box=document.querySelector('[data-msg="'+m.dataset.i+'"] .msgbody');
-      digitar(box,3,4);}
+      digitar(box,7,2);}
     return;}
   var v=e.target.closest('.act-ver');
   if(v){var L=LEADS[+v.dataset.i];L.ver=(L.ver||0)+1;render();toast('Versão '+((L.ver%2)+1));return;}
@@ -1492,6 +1602,199 @@ $('again').addEventListener('click',function(){
   $('tape').style.display='none';$('tape').innerHTML='';eyebrow('01','BUSCA');
   counting('Aguardando alvo');window.scrollTo({top:0,behavior:'smooth'});});
 
+
+
+/* ============================================================
+   GUIA DA CHAVE
+
+   Os prints entram aqui. Salve cada imagem no repositório numa
+   pasta `prints/` e coloque o caminho no campo `img`. Enquanto
+   estiver vazio, aparece um espaço tracejado dizendo o que
+   fotografar — nada quebra se você deixar sem.
+
+   Ex.:  img:'prints/passo-3.png'
+   ============================================================ */
+var GUIA=[
+ {n:1, t:'Criar o projeto no Google Cloud',
+  c:'Abra <a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a> e entre com sua conta do Google. '
+   +'No topo da tela, ao lado do logo, tem um seletor de projeto. Clique nele e depois em <b>Novo projeto</b>. '
+   +'Dê o nome que quiser — <b>radar</b> serve — e confirme.',
+  img:'', alt:'Seletor de projeto aberto, com o botão Novo projeto em destaque',
+  dica:'Se já existir um "My First Project", pode usar ele e pular este passo.'},
+
+ {n:2, t:'Ativar a Places API (New)',
+  c:'No menu lateral, vá em <b>APIs e serviços → Biblioteca</b>. Na busca, digite <b>Places API New</b>. '
+   +'Vão aparecer duas parecidas: escolha a que tem <b>(New)</b> no nome. A outra é a versão antiga e não funciona em projeto novo. '
+   +'Abra e clique no botão azul <b>Ativar</b>.',
+  img:'', alt:'Resultado da busca na Biblioteca com o card da Places API (New) em primeiro',
+  dica:'Sem o (New) no nome, o Radar não consegue buscar nada.'},
+
+ {n:3, t:'Cadastrar o cartão',
+  c:'Ao ativar a Places API, o Google vai pedir pra habilitar o faturamento. É obrigatório, mesmo pra usar só a parte gratuita — '
+   +'não existe como pular. Preencha país Brasil, tipo <b>Individual</b>, seus dados e o cartão.',
+  img:'', alt:'Tela de ativação de faturamento do Google Cloud',
+  dica:'Você tem 1.000 buscas grátis por mês, e cada busca traz até 20 negócios. No passo 6 a gente coloca um teto pra garantir que nunca passe disso.'},
+
+ {n:4, t:'Ativar a PageSpeed Insights API',
+  c:'Volte em <b>APIs e serviços → Biblioteca</b> e busque por <b>PageSpeed Insights API</b>. Abra e clique em <b>Ativar</b>. '
+   +'Essa é gratuita e não pede nada.',
+  img:'', alt:'Card da PageSpeed Insights API na Biblioteca',
+  dica:'É ela que mede a nota do site e gera o print do "antes".'},
+
+ {n:5, t:'Criar a chave',
+  c:'Vá em <b>APIs e serviços → Credenciais</b> e clique em <b>+ Criar credenciais → Chave de API</b>. '
+   +'Na tela que abrir, no campo <b>Selecionar restrições da API</b>, marque as duas: <b>Places API (New)</b> e <b>PageSpeed Insights API</b>. '
+   +'Em <b>Restrições do aplicativo</b>, deixe em <b>Nenhum</b>. Clique em <b>Criar</b> e copie a chave — ela começa com <b>AIza</b>.',
+  img:'', alt:'Janela de criação da chave, com o seletor de restrições da API aberto',
+  dica:'Se alguma das duas APIs não aparecer na lista, é porque ela ainda não foi ativada. Volte aos passos 2 e 4.'},
+
+ {n:6, t:'Colocar o teto de segurança',
+  c:'Em <b>APIs e serviços</b>, clique na <b>Places API (New)</b> e abra a aba <b>Cotas</b>. '
+   +'Procure o limite de requisições por dia e defina <b>40</b>. Com isso você fica sempre dentro do gratuito: se algo der errado, '
+   +'a API simplesmente para de responder em vez de gerar cobrança.',
+  img:'', alt:'Aba de Cotas da Places API com o limite diário sendo editado',
+  dica:'Opcional mas recomendado: em Faturamento → Orçamentos e alertas, crie um orçamento de R$ 20 com aviso por e-mail.'},
+
+ {n:7, t:'Colar no Radar',
+  c:'Volte ao Radar, clique em <b>Criar perfil</b> no canto superior direito e cole a chave no campo <b>Google API key</b>. '
+   +'O pontinho no avatar fica verde quando ela é aceita. Pronto — você não precisa fazer isso de novo.',
+  img:'', alt:'Painel de perfil do Radar com a chave colada e o pontinho verde',
+  dica:'Use o verificador no topo desta página se quiser conferir antes.'}
+];
+
+var FAQ=[
+ ['Vou ser cobrado?',
+  'Dentro do uso normal, não. São 1.000 buscas gratuitas por mês, e cada busca traz até 20 negócios — dá umas 300 varreduras completas. '
+ +'O cartão é exigência do Google pra liberar a API, não cobrança. O teto do passo 6 garante que você não passe do gratuito.'],
+ ['Por que eu preciso de uma chave minha?',
+  'Porque os dados vêm da sua conta do Google, não da nossa. Isso é o que permite o Radar ser pago uma vez só e usado pra sempre, '
+ +'sem mensalidade e sem limite de uso.'],
+ ['Ativei tudo e continua dando erro.',
+  'Ativação de API leva de 2 a 5 minutos pra valer. Espere e teste de novo no verificador acima. Se persistir, ele diz exatamente qual passo ficou faltando.'],
+ ['Posso usar em outro computador?',
+  'Pode. A chave fica salva no navegador, então no outro aparelho você cola de novo. A mesma chave funciona em quantos lugares você quiser.'],
+ ['Perdi minha chave.',
+  'Vá em APIs e serviços → Credenciais, clique no nome da chave e use o botão Mostrar chave. Se preferir, crie outra e apague a antiga.']
+];
+
+function renderGuia(){
+  $('guiaSteps').innerHTML=GUIA.map(function(g){
+    return '<div class="step">'
+      +'<div class="sn">'+g.n+'</div>'
+      +'<div class="sb"><h3>'+g.t+'</h3><p>'+g.c+'</p>'
+      +(g.img?'<img class="sp" src="'+esc(g.img)+'" alt="'+esc(g.alt)+'" loading="lazy">'
+             :'<div class="sp-vazio">Print: '+esc(g.alt)+'</div>')
+      +(g.dica?'<div class="sd">'+g.dica+'</div>':'')
+      +'</div></div>';
+  }).join('');
+  $('guiaFaq').innerHTML='<h3 class="faqh">Dúvidas comuns</h3>'+FAQ.map(function(f){
+    return '<details class="fq"><summary>'+esc(f[0])+'</summary><p>'+f[1]+'</p></details>';
+  }).join('');
+}
+
+
+/* ============================================================
+   VERIFICADOR DA CHAVE
+
+   O PDF ensina o caminho feliz. Isto cuida do plano B: traduz o
+   erro cru do Google pro passo exato que ficou faltando.
+
+   Faz duas chamadas baratas — PageSpeed (grátis) e uma busca no
+   Places com máscara mínima, que é o nível mais barato que existe.
+   ============================================================ */
+async function testarPageSpeed(key){
+  try{
+    var r=await fetch('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https%3A%2F%2Fexample.com&key='
+      +encodeURIComponent(key)+'&category=performance&strategy=mobile');
+    var d=await r.json();
+    if(r.ok&&d.lighthouseResult)return {ok:true};
+    return {ok:false, msg:(d&&d.error&&d.error.message)||('HTTP '+r.status),
+            status:(d&&d.error&&d.error.status)||''};
+  }catch(e){ return {ok:false,rede:true,msg:e.message||'sem conexão'}; }
+}
+async function testarPlaces(key){
+  try{
+    var r=await fetch('https://places.googleapis.com/v1/places:searchText',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Goog-Api-Key':key,'X-Goog-FieldMask':'places.id'},
+      body:JSON.stringify({textQuery:'padaria',languageCode:'pt-BR',regionCode:'BR',maxResultCount:1})
+    });
+    var d=await r.json();
+    if(r.ok)return {ok:true};
+    return {ok:false, msg:(d&&d.error&&d.error.message)||('HTTP '+r.status),
+            status:(d&&d.error&&d.error.status)||''};
+  }catch(e){ return {ok:false,rede:true,msg:e.message||'sem conexão'}; }
+}
+
+/* traduz o erro cru pro passo do guia */
+function diagnosticar(nome,r,passoApi){
+  var m=(r.msg||'')+' '+(r.status||'');
+  var L=m.toLowerCase();
+  if(r.rede)
+    return {tipo:'erro',t:'Sem resposta do Google',
+      d:'Se você abriu o Radar com duplo clique no arquivo, o navegador bloqueia. Use o endereço do site. Se não for o caso, verifique sua conexão.'};
+  if(/api key not valid|api_key_invalid|invalid api key/.test(L))
+    return {tipo:'erro',t:'A chave não é válida',
+      d:'Provavelmente foi copiada pela metade ou tem espaço sobrando. Ela começa com AIza e não tem espaços. Refaça o passo 5.'};
+  if(/billing|faturamento/.test(L))
+    return {tipo:'erro',t:'O faturamento não está habilitado',
+      d:'O Google exige cartão cadastrado no projeto, mesmo pra usar só a parte gratuita. Faça o passo 3.'};
+  if(/referer|referrer|not authorized|blocked|ip address/.test(L))
+    return {tipo:'erro',t:'A chave está restrita e bloqueia este endereço',
+      d:'Em Credenciais, abra a chave e mude Restrições do aplicativo para Nenhum — ou adicione este site na lista. É o passo 5.'};
+  if(/has not been used|is disabled|service_disabled|not enabled|api não/.test(L))
+    return {tipo:'erro',t:'A '+nome+' não está habilitada',
+      d:'Volte ao passo '+passoApi+' e clique em Ativar. Se você acabou de ativar, espere de 2 a 5 minutos: o Google demora pra propagar.'};
+  if(/quota|rate limit|resource_exhausted/.test(L))
+    return {tipo:'aviso',t:'Limite de cota atingido',
+      d:'A chave funciona, mas bateu no teto de requisições. Se você definiu 40/dia no passo 6, é isso — volta amanhã ou aumenta o limite.'};
+  if(/permission_denied|forbidden/.test(L))
+    return {tipo:'erro',t:'Acesso negado à '+nome,
+      d:'Normalmente é a API sem ativar ou a restrição da chave. Confira os passos '+passoApi+' e 5.'};
+  return {tipo:'erro',t:'Erro na '+nome,d:'O Google respondeu: '+m.trim()};
+}
+
+function pintaTeste(itens,resumo){
+  $('testOut').innerHTML='<div class="tres">'
+    +(resumo?'<div class="tr-'+resumo.tipo+'"><b>'+esc(resumo.t)+'</b>'+(resumo.d?'<span>'+esc(resumo.d)+'</span>':'')+'</div>':'')
+    +itens.map(function(i){
+      return '<div class="ti ti-'+i.tipo+'"><span class="tic">'+(i.tipo==='ok'?'✓':i.tipo==='aviso'?'!':'✕')+'</span>'
+        +'<div><b>'+esc(i.t)+'</b>'+(i.d?'<span>'+esc(i.d)+'</span>':'')+'</div></div>';
+    }).join('')
+    +'</div>';
+}
+
+async function rodarTeste(){
+  var key=($('testKey').value||'').trim()||getKey();
+  if(!key){
+    pintaTeste([],{tipo:'erro',t:'Cole a chave primeiro',d:'Ela começa com AIza e sai no passo 5 do guia.'});
+    return;
+  }
+  var b=$('btnTest');b.disabled=true;b.textContent='Testando…';
+  $('testOut').innerHTML='<div class="tres"><div class="ti"><span class="tic">···</span><div><b>Conversando com o Google</b><span>leva uns segundos</span></div></div></div>';
+
+  var itens=[], falhou=null;
+
+  var ps=await testarPageSpeed(key);
+  if(ps.ok) itens.push({tipo:'ok',t:'PageSpeed Insights API respondendo'});
+  else{ var d1=diagnosticar('PageSpeed Insights API',ps,4);
+        itens.push({tipo:d1.tipo,t:d1.t,d:d1.d}); if(d1.tipo==='erro')falhou=d1; }
+
+  var pl=await testarPlaces(key);
+  if(pl.ok) itens.push({tipo:'ok',t:'Places API (New) respondendo'});
+  else{ var d2=diagnosticar('Places API (New)',pl,2);
+        itens.push({tipo:d2.tipo,t:d2.t,d:d2.d}); if(d2.tipo==='erro'&&!falhou)falhou=d2; }
+
+  var resumo;
+  if(!falhou&&ps.ok&&pl.ok){
+    resumo={tipo:'ok',t:'Tudo certo, pode usar',d:'Salvei a chave no seu navegador. Vá pra aba Varredura e rode a primeira busca.'};
+    $('key').value=key;store.set('radar:key',key);paintAcct();
+  } else {
+    resumo={tipo:'erro',t:'Falta um passo',d:'Veja abaixo qual é. Corrija e teste de novo.'};
+  }
+  pintaTeste(itens,resumo);
+  b.disabled=false;b.textContent='Testar chave';
+}
 
 /* ---------- view: minha lista ---------- */
 function savedArr(){
@@ -1572,15 +1875,24 @@ $('savedList').addEventListener('click',function(e){
     .then(function(){toast('Mensagem copiada');},function(){toast('Não deu pra copiar');});}});
 
 function setView(v){
-  VIEW=v;document.body.classList.toggle('view-saved',v==='saved');
-  $('tabScan').classList.toggle('on',v==='scan');$('tabSaved').classList.toggle('on',v==='saved');
+  VIEW=v;
+  document.body.classList.toggle('view-saved',v==='saved');
+  document.body.classList.toggle('view-guia',v==='guia');
+  $('tabScan').classList.toggle('on',v==='scan');
+  $('tabSaved').classList.toggle('on',v==='saved');
+  $('tabGuia').classList.toggle('on',v==='guia');
+  if(v==='guia'){renderGuia();
+    digitar(document.querySelector('#guiaView .savedhead h2'),40,1);}
   if(v==='saved'){renderSaved();
     digitar(document.querySelector('.savedhead h2'),22,1)
-      .then(function(){digitar($('savedSub'),9,2);});}
+      .then(function(){digitar($('savedSub'),16,1);});}
   window.scrollTo({top:0,behavior:'smooth'});
 }
 $('tabScan').addEventListener('click',function(){setView('scan');});
 $('tabSaved').addEventListener('click',function(){setView('saved');});
+$('tabGuia').addEventListener('click',function(){setView('guia');});
+$('btnTest').addEventListener('click',rodarTeste);
+$('testKey').addEventListener('keydown',function(e){if(e.key==='Enter')rodarTeste();});
 updateTabCount();
 paintVersao();
 abertura();
@@ -1602,8 +1914,19 @@ $('savedClear').addEventListener('click',function(){
 
 /* ---------- retomar a última varredura ---------- */
 function saveScan(){
-  try{store.setJSON('radar:lastScan',{when:Date.now(),
-    titulo:$('rTitle').textContent,sub:$('rSub').textContent,leads:LEADS});}catch(e){}
+  /* o print do "antes" vem em base64 e pesa 50-150 KB por lead.
+     Guardar isso estoura os 5 MB do navegador e derruba a Minha
+     lista junto. O print é regerável; a lista salva não é. */
+  try{
+    var leves=LEADS.map(function(l){
+      if(!l.audit||!l.audit.shot)return l;
+      var a={};for(var k in l.audit)if(k!=='shot')a[k]=l.audit[k];
+      var c={};for(var j in l)c[j]=l[j];
+      c.audit=a;return c;
+    });
+    store.setJSON('radar:lastScan',{when:Date.now(),
+      titulo:$('rTitle').textContent,sub:$('rSub').textContent,leads:leves});
+  }catch(e){}
 }
 /* a lista salva é mais importante que a varredura: se faltar espaço, a varredura cede */
 function ensureRoom(){
@@ -1710,7 +2033,7 @@ async function run(){
     var onde=SCOPE==='brasil'?'no Brasil':SCOPE==='perto'?'na sua região':'em '+cid;
     $('rTitle').textContent=nicho.charAt(0).toUpperCase()+nicho.slice(1)+' '+onde;
     $('rSub').textContent=LEADS.length+' negócios · '+LEADS.filter(function(l){return !l.website;}).length+' sem site';
-    digitar($('rTitle'),22,1).then(function(){digitar($('rSub'),9,2);});
+    digitar($('rTitle'),40,1).then(function(){digitar($('rSub'),18,1);});
     eyebrow('03','RESULTADO');counting(LEADS.length+' negócios encontrados');
     document.body.classList.add('done');
     markHist(LEADS.map(function(l){return l.id;}).filter(Boolean));
