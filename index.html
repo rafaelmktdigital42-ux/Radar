@@ -347,6 +347,19 @@ h1.q{min-height:1.04em}
 .leaflet-bar a:hover{background:var(--bg-3);color:var(--tx)}
 .leaflet-control-attribution{background:rgba(11,12,14,.78)!important;color:var(--tx-3)!important;font-size:8.5px!important}
 .leaflet-control-attribution a{color:var(--tx-2)!important}
+
+/* ---- conferência de site em lead sem site ---- */
+.verify{margin:0 19px 15px;border:1px solid rgba(255,176,32,.4);border-radius:16px;
+  padding:14px 16px;background:rgba(255,176,32,.06)}
+@media(max-width:600px){.verify{margin:0 15px 13px}}
+.verify .vt{font-size:11.5px;line-height:1.55;color:var(--tx-2)}
+.verify .vt b{color:var(--amber);font-weight:600}
+.verify .vamber{margin-top:9px;color:var(--amber)}
+.verify .vrow{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.sitein{flex:1;min-width:170px;background:var(--bg-3);border:1px solid var(--line-2);
+  border-radius:999px;padding:8px 14px;font-family:var(--body);font-size:11.5px;color:var(--tx)}
+.sitein:focus{outline:none;border-color:var(--amber)}
+.sitein::placeholder{color:var(--tx-3)}
 </style>
 </head>
 <body>
@@ -559,6 +572,8 @@ var CHAVE_FIXA = '';
    conferir de relance se o navegador está servindo a versão nova
    ou um cache velho.
 
+   2.3  04/09/2026  "sem site no Google" != "sem site": atalho de checagem
+                    no Instagram e campo pra colar o site achado na mão
    2.2  04/09/2026  troca os tiles da CARTO (passou a exigir chave) por
                     OpenStreetMap escurecido via filtro CSS
    2.1  04/09/2026  corrige o mapa, que subiu sem folha de estilo
@@ -575,7 +590,7 @@ var CHAVE_FIXA = '';
    1.1  21/08/2026  duas etapas de medição, mensagem pronta
    1.0  21/08/2026  primeira versão
    ============================================================ */
-var VERSAO = '2.2';
+var VERSAO = '2.3';
 var BUILD  = '04/09/2026';
 
 /* a chave em uso: o campo tem prioridade, a embutida é o padrão */
@@ -1036,6 +1051,51 @@ async function inspecionar(url){
   }
   return {ok:false};
 }
+/* ============================================================
+   SITE ACHADO NA MÃO
+
+   O Google só devolve site quando o dono preencheu o campo no
+   perfil do Maps. Negócio pequeno costuma não preencher e deixar
+   só na bio do Instagram — então "sem site no Google" não é o
+   mesmo que "sem site", e a mensagem não pode afirmar que não
+   existe sem alguém conferir.
+
+   Não existe API pra ler bio de Instagram. A saída é o atalho de
+   checagem mais este campo pra colar o que foi encontrado.
+   ============================================================ */
+function normalizaUrl(v){
+  v=(v||'').trim();
+  if(!v)return null;
+  v=v.replace(/^@/,'');
+  if(!/^https?:\/\//i.test(v))v='https://'+v;
+  try{ var u=new URL(v); if(u.hostname.indexOf('.')<0)return null;
+       return u.origin+u.pathname.replace(/\/$/,''); }
+  catch(e){ return null; }
+}
+function ehSoLink(url){
+  return /instagram\.com|linktr\.ee|linktree|facebook\.com|beacons\.|bio\.link|linkbio|campsite\.bio|wa\.me/i.test(url);
+}
+async function usarSite(i,valor){
+  var l=LEADS[i];
+  var url=normalizaUrl(valor);
+  if(!url){toast('Endereço não parece válido');return;}
+  if(ehSoLink(url)){
+    /* agregador de links não é página: segue como criar do zero,
+       mas agora a gente sabe e a mensagem pode usar isso */
+    l.bioLink=url;l.website=null;l.manualSite=false;
+    computeScore(l);render();toast('Anotado: é só link de rede');
+  } else {
+    l.website=url;l.manualSite=true;l.pre=null;l.audit=null;l.html=null;l.deep=false;
+    render();
+    try{ l.pre=await precheck(url); }catch(e){ l.pre={alive:false,ms:0}; }
+    computeScore(l);render();
+    toast('Site registrado · rode a análise profunda');
+  }
+  if(l.id&&SAVED[l.id]){var k=snapshot(l);k.status=SAVED[l.id].status;k.nota=SAVED[l.id].nota;
+    k.retomar=SAVED[l.id].retomar;k.savedAt=SAVED[l.id].savedAt;k.updatedAt=Date.now();
+    SAVED[l.id]=k;persistSaved();}
+}
+
 function temPixel(l){return !!(l.html&&l.html.ok&&(l.html.pixelMeta||l.html.pixelGoogle));}
 
 /* ---------- etapa 2: análise profunda ---------- */
@@ -1151,7 +1211,10 @@ function buildMessage(l,v){
     P.push(direto?'Quem já conhece indica. Quem não conhece está agora no celular procurando '+nicho+' em '+cid
       +', e não chega até vocês porque não tem onde chegar. Esse cliente não aparece em relatório nenhum: não dá pra sentir falta do que você não vê.'
       :'Vocês têm '+l.reviews+' avaliações e '+l.rating.toFixed(1)+' de nota. Isso é reputação construída. Só que ela só funciona pra quem já ouviu falar de vocês — quem está procurando agora, no celular, não encontra nada além do pino no mapa.');
-    P.push('');P.push('O endereço no mapa resolve pra quem já decidiu. A página é o que faz decidir.');P.push('');
+    P.push('');
+    if(l.bioLink)P.push('O link da bio leva pra uma lista de links, não pra uma página. Quem clica ali escolhe entre botões em vez de entender o que vocês fazem.');
+    else P.push('O endereço no mapa resolve pra quem já decidiu. A página é o que faz decidir.');
+    P.push('');
     P.push('Já fiz uma versão da página de vocês pra mostrar essa diferença na prática. Segue aí. Vê se o telefone que coloquei é o de vocês mesmo.');P.push('');
     P.push('Fica com você, use se achar que vale. Se quiser, eu te apresento a ideia inteira numa conversa rápida, e se fizer sentido eu coloco no ar.');P.push('');
     P.push('O QUE RECRIEI: uma página de uma dobra só — o que vocês fazem, a prova, o endereço e um botão de WhatsApp.');
@@ -1179,7 +1242,8 @@ function buildMessage(l,v){
 function tagsOf(l){
   var t=[],a=l.audit;
   var v=verdict(l);t.push({t:v.t,c:v.c});
-  if(!l.website)t.push({t:'Só mapa',c:'red'});
+  if(!l.website)t.push({t:l.bioLink?'Só link de rede':'Sem site no Google',c:'red'});
+  if(l.manualSite)t.push({t:'Site achado na mão',c:''});
   if(l.website&&/instagram\.com|linktr\.ee|facebook\.com/.test(l.website))t.push({t:'Só Instagram',c:'red'});
   if(a&&!a.failed){
     if(a.viewport===0)t.push({t:'Abre torto no celular',c:'red'});
@@ -1301,6 +1365,19 @@ function cardHTML(l,i,rank){
   var wa=l.phone?'https://wa.me/55'+l.phone.replace(/\D/g,''):null;
   var adlib='https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&q='+encodeURIComponent(l.name)+'&search_type=keyword_unordered';
   var probe='';
+  if(!l.website){
+    var ig='https://www.instagram.com/explore/search/keyword/?q='+encodeURIComponent(l.name);
+    probe='<div class="verify">'
+      +'<div class="vt">O Google não tem site cadastrado — mas muita gente só coloca na bio do Instagram. '
+      +'<b>Confira antes de mandar a mensagem.</b></div>'
+      +'<div class="vrow">'
+      +'<a class="act prime" href="'+esc(ig)+'" target="_blank" rel="noopener">Abrir Instagram</a>'
+      +'<input class="sitein act-siteinput" data-i="'+i+'" placeholder="achou o site? cole aqui" value="'+esc(l.bioLink||'')+'">'
+      +'<button class="act act-setsite" data-i="'+i+'">Usar</button>'
+      +'</div>'
+      +(l.bioLink?'<div class="vt vamber">Isso é agregador de links, não é página. Segue como criar do zero.</div>':'')
+      +'</div>';
+  }
   if(l.website){
     var dot='',txt='Site não checado';
     if(l.deep&&l.audit&&!l.audit.failed){
@@ -1379,6 +1456,10 @@ function render(){
 $('chips').addEventListener('click',function(e){var c=e.target.closest('.chip');if(!c)return;
   [].forEach.call(this.querySelectorAll('.chip'),function(x){x.classList.remove('on');});
   c.classList.add('on');FILTER=c.dataset.f;render();});
+$('list').addEventListener('keydown',function(e){
+  var inp=e.target.closest('.act-siteinput');
+  if(inp&&e.key==='Enter'){e.preventDefault();usarSite(+inp.dataset.i,inp.value);}
+});
 $('list').addEventListener('click',function(e){
   var d=e.target.closest('.act-deep');if(d)return runDeep(+d.dataset.i);
   var m=e.target.closest('.act-msg');
@@ -1388,6 +1469,9 @@ $('list').addEventListener('click',function(e){
     return;}
   var v=e.target.closest('.act-ver');
   if(v){var L=LEADS[+v.dataset.i];L.ver=(L.ver||0)+1;render();toast('Versão '+((L.ver%2)+1));return;}
+  var ss=e.target.closest('.act-setsite');
+  if(ss){var inp=document.querySelector('.act-siteinput[data-i="'+ss.dataset.i+'"]');
+    usarSite(+ss.dataset.i,inp?inp.value:'');return;}
   var sh=e.target.closest('.act-shot');
   if(sh){var lz=LEADS[+sh.dataset.i];
     if(lz.audit&&lz.audit.shot){var a=document.createElement('a');
