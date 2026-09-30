@@ -419,6 +419,9 @@ body.view-guia .hero,body.view-guia .results,body.view-guia #savedView{display:n
 .fq summary::after{content:'+';float:right;color:var(--red);font-family:var(--disp)}
 .fq[open] summary::after{content:'−'}
 .fq p{padding:0 18px 16px;font-size:12.2px;line-height:1.65;color:var(--tx-2)}
+
+/* elemento na fila da abertura, esperando a vez de ser digitado */
+.pre-type{visibility:hidden}
 </style>
 </head>
 <body>
@@ -661,6 +664,10 @@ var CHAVE_FIXA = '';
    conferir de relance se o navegador está servindo a versão nova
    ou um cache velho.
 
+   2.7  30/09/2026  frase de abertura em três camadas: cobrança pendente,
+                    molde com o histórico, ou sorteio de 30 frases úteis
+   2.6  30/09/2026  corrige a abertura: o texto de apoio aparecia inteiro
+                    e apagava pra digitar depois da headline
    2.5  30/09/2026  aba "como conseguir a chave" com guia de 7 passos e
                     verificador que traduz o erro do Google pro passo certo
    2.4  26/09/2026  digitação mais lenta e calibrável; corrige lead travado
@@ -684,7 +691,7 @@ var CHAVE_FIXA = '';
    1.1  21/08/2026  duas etapas de medição, mensagem pronta
    1.0  21/08/2026  primeira versão
    ============================================================ */
-var VERSAO = '2.5';
+var VERSAO = '2.7';
 var BUILD  = '30/09/2026';
 
 /* a chave em uso: o campo tem prioridade, a embutida é o padrão */
@@ -1408,6 +1415,7 @@ function parcial(src,orc,alvo){
 function digitar(el,vel,passo,pausa){
   return new Promise(function(pronto){
     if(!el){pronto();return;}
+    el.classList.remove('pre-type');
     if(el.__digitando){pronto();return;}
     var html=el.innerHTML;
     if(REDUCE||el.getAttribute('data-typed')===html){pronto();return;}
@@ -1430,10 +1438,129 @@ function digitar(el,vel,passo,pausa){
   });
 }
 async function abertura(){
-  await digitar($('eyebrow'),34,1,200);
-  await digitar(document.querySelector('h1.q'),48,1,320);
-  await digitar(document.querySelector('.lede'),10,1,180);
-  await digitar($('run'),40,1,300);
+  var f=fraseAbertura();
+  var h1=document.querySelector('h1.q'), lede=document.querySelector('.lede');
+  if(h1)h1.innerHTML=f.h;          /* só o nome vem de fora, e vai escapado */
+  if(lede)lede.textContent=f.p;
+
+  /* sem isso, quem ainda não chegou na vez fica com o texto inteiro
+     na tela e depois apaga pra digitar — que é o efeito errado.
+     visibility mantém o espaço ocupado, então a página não pula. */
+  var fila=[$('eyebrow'),document.querySelector('h1.q'),
+            document.querySelector('.lede'),$('run')];
+  fila.forEach(function(el){if(el&&!REDUCE)el.classList.add('pre-type');});
+  for(var i=0;i<fila.length;i++){
+    await digitar(fila[i],[34,48,10,40][i],1,[200,320,180,300][i]);
+  }
+}
+
+
+/* ============================================================
+   A FRASE DE ABERTURA
+
+   Três camadas, com prioridade:
+
+   1. Pendência — se tem cobrança vencida, é isso que aparece.
+      Trabalho parado vence qualquer frase bonita.
+   2. Molde com o histórico dele — usa a última varredura pra
+      sugerir o próximo passo. Nunca soa genérico.
+   3. Sorteio do pote — só frases com utilidade. Nada de
+      motivacional: isso vira ruído na décima abertura.
+
+   Primeira sessão não sorteia nada: quem está perdido precisa
+   de orientação fixa, não de variedade.
+   ============================================================ */
+
+/* pote rotativo — cada uma serve pra decidir o que fazer agora */
+var FRASES=[
+ 'Restaurante e salão quase nunca têm site. Muito movimento, zero presença.',
+ 'Nicho de ticket alto com 200 avaliações e site ruim é o melhor alvo que existe.',
+ 'Quem já paga anúncio sente a dor mais forte — e tem verba aprovada.',
+ 'Site que abre torto no celular é o argumento mais fácil de mostrar.',
+ 'Avaliação em volume vale mais que nota alta: prova que entra dinheiro.',
+ 'Clínica com 5,0 e 8 avaliações abriu semana passada. Não tem orçamento ainda.',
+ 'Sexta de manhã costuma responder melhor que segunda.',
+ 'Mande a peça pronta antes de perguntar qualquer coisa.',
+ 'Preço só depois do "gostei". Nunca na primeira mensagem.',
+ 'O print do "antes" faz metade do trabalho de convencer.',
+ 'Terceiro contato fecha mais que o primeiro. Use a data de cobrança.',
+ 'Um "não" rápido vale mais que um "vou ver" que nunca volta.',
+ 'Filtre por 50 avaliações ou mais e a lista fica bem mais quente.',
+ 'O modo Brasil todo serve pra quem atende remoto e não depende de estar perto.',
+ 'Arraste o pino pro bairro certo. Centro e periferia são mercados diferentes.',
+ 'Análise profunda só em quem você vai abordar hoje. O resto é tempo perdido.',
+ 'Sem site no Google não é o mesmo que sem site. Confira o Instagram antes.',
+ 'Link da bio levando pro Linktree é argumento, não impedimento.',
+ 'A faixa de preço já considera o movimento do negócio. Não cobre menos por medo.',
+ 'Salve na lista antes de mandar. Semana que vem você não vai lembrar de quem falou.',
+ 'Nota do site abaixo de 50 é refazer, não ajustar. E refazer paga melhor.',
+ 'Anote o que rolou no contato. Memória some, anotação não.',
+ 'Quem respondeu e sumiu merece uma segunda mensagem, não um descarte.',
+ 'Cidade pequena esgota rápido. Varie o nicho antes de varrer a mesma praça de novo.',
+ 'Dois nichos parecidos trazem negócios diferentes. Tente dentista e ortodontia.',
+ 'Baixe o CSV antes de fechar a aba se a varredura foi boa.',
+ 'Negócio sem telefone é mais difícil de alcançar. Priorize quem tem.',
+ 'Site parado desde 2021 é sinal de que ninguém cuida. Porta aberta.',
+ 'Feito no Wix costuma significar que alguém tentou resolver sozinho e cansou.',
+ 'Vinte negócios bem abordados rendem mais que duzentos na planilha.'
+];
+
+/* moldes que usam o histórico — preenchidos com dado real */
+function fraseComHistorico(){
+  var ult=store.getJSON('radar:ultimaBusca',null);
+  if(!ult||!ult.nicho)return null;
+  var opcoes=[];
+  if(ult.cidade){
+    opcoes.push('Da última vez foi '+ult.nicho+' em '+ult.cidade+'. Já tentou a cidade vizinha?');
+    opcoes.push(ult.nicho+' em '+ult.cidade+' você já varreu. Troque o nicho e a lista muda inteira.');
+  }
+  opcoes.push('Seu último alvo foi '+ult.nicho+'. Um nicho de ticket mais alto rende o mesmo esforço por mais dinheiro.');
+  if(ult.semSite!=null&&ult.semSite>0)
+    opcoes.push('A última varredura achou '+ult.semSite+' sem site. Abordou todos?');
+  return opcoes[Math.floor(Math.random()*opcoes.length)];
+}
+
+function saudacaoHora(){
+  var h=new Date().getHours();
+  return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
+}
+
+/* não repetir as 8 últimas: sorteio puro repete cedo demais */
+function sorteiaFrase(){
+  var vistas=store.getJSON('radar:frasesVistas',[]);
+  var livres=[];
+  for(var i=0;i<FRASES.length;i++)if(vistas.indexOf(i)<0)livres.push(i);
+  if(!livres.length){vistas=[];livres=FRASES.map(function(_,i){return i;});}
+  var esc=livres[Math.floor(Math.random()*livres.length)];
+  vistas.push(esc);
+  while(vistas.length>8)vistas.shift();
+  store.setJSON('radar:frasesVistas',vistas);
+  return FRASES[esc];
+}
+
+function fraseAbertura(){
+  var nome=$('pNome').value.trim();
+  var jaUsou=!!store.get('radar:ultimaBusca');
+
+  /* 1. trabalho parado manda em tudo */
+  var venc=Object.keys(SAVED).map(function(k){return SAVED[k];}).filter(venceu).length;
+  if(venc>0){
+    return {h:(nome?saudacaoHora()+', <em>'+esc(nome.split(' ')[0])+'</em>.':saudacaoHora()+'.'),
+            p:venc===1?'Tem 1 cliente esperando cobrança hoje. Abra a Minha lista.'
+                      :'Tem '+venc+' clientes esperando cobrança hoje. Abra a Minha lista.'};
+  }
+
+  /* 2. primeira vez: orientação fixa, sem sorteio */
+  if(!jaUsou){
+    return {h:'Escolha o <em>nicho</em> e a região.',
+            p:'O Radar acha os negócios, mede o site de cada um e escreve a mensagem que você manda. Leva uns 30 segundos.'};
+  }
+
+  /* 3. histórico, senão o pote */
+  var head=nome?saudacaoHora()+', <em>'+esc(nome.split(' ')[0])+'</em>.'
+                :'Escolha o <em>nicho</em> e a região.';
+  var hist=Math.random()<0.4?fraseComHistorico():null;
+  return {h:head, p:hist||sorteiaFrase()};
 }
 
 /* ---------- contador subindo ---------- */
@@ -2034,6 +2161,10 @@ async function run(){
     $('rTitle').textContent=nicho.charAt(0).toUpperCase()+nicho.slice(1)+' '+onde;
     $('rSub').textContent=LEADS.length+' negócios · '+LEADS.filter(function(l){return !l.website;}).length+' sem site';
     digitar($('rTitle'),40,1).then(function(){digitar($('rSub'),18,1);});
+    store.setJSON('radar:ultimaBusca',{nicho:nicho,
+      cidade:SCOPE==='cidade'?cid:(SCOPE==='brasil'?'Brasil':'sua região'),
+      total:LEADS.length, semSite:LEADS.filter(function(l){return !l.website;}).length,
+      quando:Date.now()});
     eyebrow('03','RESULTADO');counting(LEADS.length+' negócios encontrados');
     document.body.classList.add('done');
     markHist(LEADS.map(function(l){return l.id;}).filter(Boolean));
